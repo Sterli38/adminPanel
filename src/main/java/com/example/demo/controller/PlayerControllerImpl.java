@@ -6,6 +6,7 @@ import com.example.demo.controller.response.PlayerResponse;
 import com.example.demo.service.PlayerService;
 import com.example.demo.service.dto.PlayerDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 public class PlayerControllerImpl implements PlayerController {
@@ -44,7 +46,7 @@ public class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public PlayerResponse getPlayerById(@PathVariable Long id) {
+    public PlayerResponse getPlayerById(@Positive @PathVariable Long id) {
         return PlayerMapper.convertPlayerDtoToPlayerResponse(playerService.getPlayerById(id));
     }
 
