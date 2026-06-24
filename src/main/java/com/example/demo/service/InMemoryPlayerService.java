@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.PlayerMapper;
 import com.example.demo.dao.PlayerRepository;
 import com.example.demo.entity.Player;
 import com.example.demo.service.dto.PlayerDto;
@@ -15,16 +16,16 @@ public class InMemoryPlayerService implements PlayerService {
 
     @Override
     public PlayerDto create(PlayerDto playerDto) {
-        Player player = playerRepository.create(convertPlayerDtoToPlayer(playerDto));
-        player.setLevel(calculateLevel(player.getExperience()));
-        player.setUntilNextLevel(calculateUntilNextLevel(player.getLevel(), player.getExperience()));
-        return convertPlayerToPlayerDto(player);
+        playerDto.setLevel(calculateLevel(playerDto.getExperience()));
+        playerDto.setUntilNextLevel(calculateUntilNextLevel(playerDto.getLevel(), playerDto.getExperience()));
+        Player createdPlayer = playerRepository.create(PlayerMapper.convertPlayerDtoToPlayer(playerDto));
+        return PlayerMapper.convertPlayerToPlayerDto(createdPlayer);
     }
 
     @Override
     public List<PlayerDto> getAllPlayers() {
        return playerRepository.getAllPlayers().stream()
-               .map(this::convertPlayerToPlayerDto)
+               .map(PlayerMapper::convertPlayerToPlayerDto)
                .toList();
     }
 
@@ -40,7 +41,7 @@ public class InMemoryPlayerService implements PlayerService {
 
     @Override
     public PlayerDto getPlayerById(Long id) {
-        return convertPlayerToPlayerDto(playerRepository.getPlayerById(id));
+        return PlayerMapper.convertPlayerToPlayerDto(playerRepository.getPlayerById(id));
     }
 
     @Override
@@ -59,32 +60,5 @@ public class InMemoryPlayerService implements PlayerService {
 
     private Integer calculateUntilNextLevel(Integer level, Integer experience) {
         return 50 * (level + 1) * (level + 2) - experience;
-    }
-
-    private Player convertPlayerDtoToPlayer(PlayerDto playerDto) {
-        Player player = new Player();
-        player.setName(playerDto.getName());
-        player.setTitle(playerDto.getTitle());
-        player.setRace(playerDto.getRace());
-        player.setProfession(playerDto.getProfession());
-        player.setBirthday(playerDto.getBirthday());
-        player.setBanned(playerDto.getBanned());
-        player.setExperience(playerDto.getExperience());
-        return player;
-    }
-
-    private PlayerDto convertPlayerToPlayerDto(Player player) {
-        PlayerDto playerDto = new PlayerDto();
-        playerDto.setId(player.getId());
-        playerDto.setName(player.getName());
-        playerDto.setTitle(player.getTitle());
-        playerDto.setRace(player.getRace());
-        playerDto.setProfession(player.getProfession());
-        playerDto.setBirthday(player.getBirthday());
-        playerDto.setBanned(player.getBanned());
-        playerDto.setExperience(player.getExperience());
-        playerDto.setLevel(player.getLevel());
-        playerDto.setUntilNextLevel(player.getUntilNextLevel());
-        return playerDto;
     }
 }

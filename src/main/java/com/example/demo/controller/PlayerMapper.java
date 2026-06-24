@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.response.PlayerResponse;
+import com.example.demo.entity.Player;
 import com.example.demo.service.dto.PlayerDto;
 
 import java.util.Date;
@@ -34,5 +35,36 @@ public class PlayerMapper {
         playerResponse.setUntilNextLevel(playerDto.getUntilNextLevel());
 
         return playerResponse;
+    }
+
+    public static Player convertPlayerDtoToPlayer(PlayerDto playerDto) {
+        Player player = new Player();
+        player.setName(playerDto.getName());
+        player.setTitle(playerDto.getTitle());
+        player.setRace(playerDto.getRace());
+        player.setProfession(playerDto.getProfession());
+        player.setBirthday(playerDto.getBirthday());
+        player.setBanned(playerDto.getBanned());
+        player.setExperience(playerDto.getExperience());
+        player.setLevel(playerDto.getLevel());
+        player.setUntilNextLevel(playerDto.getUntilNextLevel());
+
+        return player;
+    }
+
+    public static PlayerDto convertPlayerToPlayerDto(Player player) {
+        PlayerDto playerDto = new PlayerDto();
+        playerDto.setId(player.getId());
+        playerDto.setName(player.getName());
+        playerDto.setTitle(player.getTitle());
+        playerDto.setRace(player.getRace());
+        playerDto.setProfession(player.getProfession());
+        playerDto.setBirthday(player.getBirthday());
+        playerDto.setBanned(player.getBanned());
+        playerDto.setExperience(player.getExperience());
+        playerDto.setLevel(player.getLevel());
+        playerDto.setUntilNextLevel(player.getUntilNextLevel());
+
+        return playerDto;
     }
 }
