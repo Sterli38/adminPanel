@@ -17,5 +17,5 @@ public interface PlayerService {
 
     PlayerDto editPlayer(PlayerDto player);
 
-    PlayerDto deletePlayerById(Long id);
+    void deletePlayerById(Long id);
 }

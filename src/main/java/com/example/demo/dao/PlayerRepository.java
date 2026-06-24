@@ -18,5 +18,5 @@ public interface PlayerRepository {
 
     Player editPlayer(Player player);
 
-    Player deletePlayerById(Long id);
+    void deletePlayerById(Long id);
 }

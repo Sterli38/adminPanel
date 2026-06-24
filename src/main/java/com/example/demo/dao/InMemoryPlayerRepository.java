@@ -57,7 +57,7 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     }
 
     @Override
-    public Player deletePlayerById(Long id) {
-        return playerStorage.remove(id);
+    public void deletePlayerById(Long id) {
+        playerStorage.remove(id);
     }
 }

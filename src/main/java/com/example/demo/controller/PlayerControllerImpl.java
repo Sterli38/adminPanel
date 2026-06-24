@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
@@ -53,8 +54,7 @@ public class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public void deletePlayerById(Long id) {
-
+    public void deletePlayerById(@Positive @PathVariable Long id) {
+        playerService.deletePlayerById(id);
     }
-
 }

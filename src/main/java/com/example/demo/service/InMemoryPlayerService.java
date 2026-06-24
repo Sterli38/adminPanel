@@ -24,9 +24,9 @@ public class InMemoryPlayerService implements PlayerService {
 
     @Override
     public List<PlayerDto> getAllPlayers() {
-       return playerRepository.getAllPlayers().stream()
-               .map(PlayerMapper::convertPlayerToPlayerDto)
-               .toList();
+        return playerRepository.getAllPlayers().stream()
+                .map(PlayerMapper::convertPlayerToPlayerDto)
+                .toList();
     }
 
     @Override
@@ -50,8 +50,8 @@ public class InMemoryPlayerService implements PlayerService {
     }
 
     @Override
-    public PlayerDto deletePlayerById(Long id) {
-        return null;
+    public void deletePlayerById(Long id) {
+        playerRepository.deletePlayerById(id);
     }
 
     private Integer calculateLevel(Integer experience) {
