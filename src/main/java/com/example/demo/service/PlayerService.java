@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.filter.Filter;
 import com.example.demo.service.dto.PlayerDto;
 
 import java.util.List;
@@ -9,13 +10,11 @@ public interface PlayerService {
 
     List<PlayerDto> getAllPlayers();
 
-    List<PlayerDto> getPlayerByFilter();
-
-    Integer getAllPlayerCount();
+    List<PlayerDto> getPlayerByFilter(Filter filter);
 
     PlayerDto getPlayerById(Long id);
 
-    PlayerDto editPlayer(PlayerDto player);
+    PlayerDto editPlayer(Long id, PlayerDto playerDto);
 
     void deletePlayerById(Long id);
 }

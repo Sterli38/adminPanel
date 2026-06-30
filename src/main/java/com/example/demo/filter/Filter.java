@@ -13,12 +13,11 @@ public class Filter {
     private Long after;
     private Long before;
     private Boolean banned;
-    private Integer MinExperience;
-    private Integer MaxExperience;
-    private Integer MinLevel;
-    private Integer MaxLevel;
+    private Integer minExperience;
+    private Integer maxExperience;
+    private Integer minLevel;
+    private Integer maxLevel;
     private PlayerOrder order;
-    private Integer pageNumber;
-    private Integer pageSize;
-
+    private Integer pageNumber = 0;
+    private Integer pageSize = 3;
 }

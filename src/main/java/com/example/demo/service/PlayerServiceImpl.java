@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.controller.PlayerMapper;
 import com.example.demo.dao.PlayerRepository;
 import com.example.demo.entity.Player;
+import com.example.demo.filter.Filter;
 import com.example.demo.service.dto.PlayerDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class InMemoryPlayerService implements PlayerService {
+public class PlayerServiceImpl implements PlayerService {
     private final PlayerRepository playerRepository;
 
     @Override
     public PlayerDto create(PlayerDto playerDto) {
         playerDto.setLevel(calculateLevel(playerDto.getExperience()));
         playerDto.setUntilNextLevel(calculateUntilNextLevel(playerDto.getLevel(), playerDto.getExperience()));
-        Player createdPlayer = playerRepository.create(PlayerMapper.convertPlayerDtoToPlayer(playerDto));
+        Player dto = PlayerMapper.convertPlayerDtoToPlayer(playerDto);
+        Player createdPlayer = playerRepository.create(dto);
         return PlayerMapper.convertPlayerToPlayerDto(createdPlayer);
     }
 
@@ -30,13 +32,10 @@ public class InMemoryPlayerService implements PlayerService {
     }
 
     @Override
-    public List<PlayerDto> getPlayerByFilter() {
-        return List.of();
-    }
-
-    @Override
-    public Integer getAllPlayerCount() {
-        return 0;
+    public List<PlayerDto> getPlayerByFilter(Filter filter) {
+        return playerRepository.getPlayerByFilter(filter).stream()
+                .map(PlayerMapper::convertPlayerToPlayerDto)
+                .toList();
     }
 
     @Override
@@ -45,8 +44,12 @@ public class InMemoryPlayerService implements PlayerService {
     }
 
     @Override
-    public PlayerDto editPlayer(PlayerDto player) {
-        return null;
+    public PlayerDto editPlayer(Long id, PlayerDto playerDto) { //TODO совместить это с сохранением
+        playerDto.setLevel(calculateLevel(playerDto.getExperience()));
+        playerDto.setUntilNextLevel(calculateUntilNextLevel(playerDto.getLevel(), playerDto.getExperience()));
+        Player dto = PlayerMapper.convertPlayerDtoToPlayer(playerDto);
+        Player editPlayer = playerRepository.editPlayer(id, dto);
+        return PlayerMapper.convertPlayerToPlayerDto(editPlayer);
     }
 
     @Override

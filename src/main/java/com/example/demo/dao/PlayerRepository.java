@@ -12,11 +12,9 @@ public interface PlayerRepository {
 
     List<Player> getPlayerByFilter(Filter filter);
 
-    Integer getAllPlayerCount();
-
     Player getPlayerById(Long id);
 
-    Player editPlayer(Player player);
+    Player editPlayer(Long id, Player player);
 
     void deletePlayerById(Long id);
 }
