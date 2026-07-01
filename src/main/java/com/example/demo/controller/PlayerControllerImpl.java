@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
@@ -64,12 +63,11 @@ public class PlayerControllerImpl implements PlayerController {
 
         Filter filter = PlayerMapper.convertRequestParamsToFilter(name, title, race, profession, after, before, banned,
                 minExperience, maxExperience, minLevel, maxLevel, null, null, null);
-        List<PlayerDto> receivedPlayers = playerService.getPlayerByFilter(filter);
-        return receivedPlayers.size(); //TODO вынести на сторону репозитория/хранилища
+        return playerService.getAllPlayersCount(filter); //TODO вынести на сторону репозитория/хранилища
     }
 
     @Override
-    public PlayerResponse getPlayerById(@Positive @PathVariable Long id) {
+    public PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id) {
         return PlayerMapper.convertPlayerDtoToPlayerResponse(playerService.getPlayerById(id));
     }
 

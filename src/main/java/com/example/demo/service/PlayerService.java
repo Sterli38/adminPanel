@@ -14,6 +14,8 @@ public interface PlayerService {
 
     PlayerDto getPlayerById(Long id);
 
+    Integer getAllPlayersCount(Filter filter);
+
     PlayerDto editPlayer(Long id, PlayerDto playerDto);
 
     void deletePlayerById(Long id);

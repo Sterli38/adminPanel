@@ -17,10 +17,12 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto create(PlayerDto playerDto) {
-        playerDto.setLevel(calculateLevel(playerDto.getExperience()));
-        playerDto.setUntilNextLevel(calculateUntilNextLevel(playerDto.getLevel(), playerDto.getExperience()));
         Player dto = PlayerMapper.convertPlayerDtoToPlayer(playerDto);
-        Player createdPlayer = playerRepository.create(dto);
+
+        dto.setLevel(calculateLevel(dto.getExperience()));
+        dto.setUntilNextLevel(calculateUntilNextLevel(dto.getLevel(), dto.getExperience()));
+
+        Player createdPlayer = playerRepository.save(dto);
         return PlayerMapper.convertPlayerToPlayerDto(createdPlayer);
     }
 
@@ -43,13 +45,41 @@ public class PlayerServiceImpl implements PlayerService {
         return PlayerMapper.convertPlayerToPlayerDto(playerRepository.getPlayerById(id));
     }
 
+    public Integer getAllPlayersCount(Filter filter) {
+        return playerRepository.getAllPlayersCount(filter);
+    }
+
     @Override
-    public PlayerDto editPlayer(Long id, PlayerDto playerDto) { //TODO совместить это с сохранением
-        playerDto.setLevel(calculateLevel(playerDto.getExperience()));
-        playerDto.setUntilNextLevel(calculateUntilNextLevel(playerDto.getLevel(), playerDto.getExperience()));
-        Player dto = PlayerMapper.convertPlayerDtoToPlayer(playerDto);
-        Player editPlayer = playerRepository.editPlayer(id, dto);
-        return PlayerMapper.convertPlayerToPlayerDto(editPlayer);
+    public PlayerDto editPlayer(Long id, PlayerDto playerDto) { //TODO метод работает некорректно. сохраняется новый игрок при обновлении, а старый остается
+        Player playerToUpdate = PlayerMapper.convertPlayerDtoToPlayer(getPlayerById(id));
+
+        if (playerDto.getName() != null) {
+            playerToUpdate.setName(playerDto.getName());
+        }
+        if (playerDto.getTitle() != null) {
+            playerToUpdate.setTitle(playerDto.getTitle());
+        }
+        if (playerDto.getRace() != null) {
+            playerToUpdate.setRace(playerDto.getRace());
+        }
+        if (playerDto.getProfession() != null) {
+            playerToUpdate.setProfession(playerDto.getProfession());
+        }
+        if (playerDto.getBirthday() != null) {
+            playerToUpdate.setBirthday(playerDto.getBirthday());
+        }
+        if (playerDto.getBanned() != null) {
+            playerToUpdate.setBanned(playerDto.getBanned());
+        }
+        if (playerDto.getExperience() != null) {
+            playerToUpdate.setExperience(playerDto.getExperience());
+        }
+
+        playerToUpdate.setLevel(calculateLevel(playerToUpdate.getExperience()));
+        playerToUpdate.setUntilNextLevel(calculateUntilNextLevel(playerToUpdate.getLevel(), playerToUpdate.getExperience()));
+
+        Player savedPlayer = playerRepository.save(playerToUpdate);
+        return PlayerMapper.convertPlayerToPlayerDto(savedPlayer);
     }
 
     @Override

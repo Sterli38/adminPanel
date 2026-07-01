@@ -6,7 +6,7 @@ import com.example.demo.filter.Filter;
 import java.util.List;
 
 public interface PlayerRepository {
-    Player create(Player player);
+    Player save(Player player);
 
     List<Player> getAllPlayers();
 
@@ -14,7 +14,7 @@ public interface PlayerRepository {
 
     Player getPlayerById(Long id);
 
-    Player editPlayer(Long id, Player player);
+    Integer getAllPlayersCount(Filter filter);
 
     void deletePlayerById(Long id);
 }

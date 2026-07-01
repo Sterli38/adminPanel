@@ -6,7 +6,6 @@ import com.example.demo.controller.response.PlayerResponse;
 import com.example.demo.entity.Profession;
 import com.example.demo.entity.Race;
 import com.example.demo.filter.Filter;
-import com.example.demo.filter.PlayerOrder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RequestMapping("/rest/players")
@@ -25,7 +24,7 @@ public interface PlayerController {
     PlayerResponse create(@Valid @RequestBody CreatePlayerRequest createPlayerRequest);
 
     @GetMapping("/getAllPlayers")
-    List<PlayerResponse> getAllPlayers();
+    List<PlayerResponse> getAllPlayers(); //TODO удалить
 
     @GetMapping
     List<PlayerResponse> getPlayerByFilter(Filter filter);
@@ -44,12 +43,12 @@ public interface PlayerController {
                               @RequestParam(required = false) Integer maxLevel);
 
     @GetMapping("/{id}")
-    PlayerResponse getPlayerById(@Positive @PathVariable Long id);
+    PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id);
 
     @PostMapping("/{id}")
-    PlayerResponse editPlayer(@Positive @PathVariable Long id, @RequestBody EditPlayerRequest editPlayerRequest);
+    PlayerResponse editPlayer(@PositiveOrZero @PathVariable Long id, @RequestBody EditPlayerRequest editPlayerRequest);
 
     @DeleteMapping("/{id}")
-    void deletePlayerById(@Positive @PathVariable Long id);
+    void deletePlayerById(@PositiveOrZero @PathVariable Long id);
 
 }

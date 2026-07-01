@@ -41,7 +41,7 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     }
 
     @Override
-    public Player create(Player player) {
+    public Player save(Player player) {
         Player newPlayer = new Player();
         newPlayer.setId(++id);
         newPlayer.setName(player.getName());
@@ -67,20 +67,7 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     public List<Player> getPlayerByFilter(Filter filter) {
         return playerStorage.values().stream()
                 .filter(FilterPredicateBuilder.buildPredicate(filter))
-                .sorted((a, b) -> { //TODO вынести в отдельный метод
-                    if (filter.getOrder() == PlayerOrder.ID) {
-                        return a.getId().compareTo(b.getId());
-                    } else if (filter.getOrder() == PlayerOrder.NAME) {
-                        return a.getName().compareTo(b.getName());
-                    } else if (filter.getOrder() == PlayerOrder.EXPERIENCE) {
-                        return a.getExperience().compareTo(b.getExperience());
-                    } else if (filter.getOrder() == PlayerOrder.BIRTHDAY) {
-                        return a.getBirthday().compareTo(b.getBirthday());
-                    } else if (filter.getOrder() == PlayerOrder.LEVEL) {
-                        return a.getLevel().compareTo(b.getLevel());
-                    }
-                    return 0;
-                })
+                .sorted((a, b) -> comparePlayerByFilter(a, b, filter))//TODO вынести в отдельный метод именно Comparator
                 .skip(filter.getPageNumber() == null || filter.getPageSize() == null ? 0 : (long) filter.getPageNumber() * filter.getPageSize())
                 .limit(filter.getPageSize() == null ? 1000000000 : filter.getPageSize())
                 .toList();
@@ -91,39 +78,27 @@ public class InMemoryPlayerRepository implements PlayerRepository {
         return playerStorage.get(id);
     }
 
-    @Override
-    public Player editPlayer(Long id, Player player) {
-        Player editPlayer = getPlayerById(id);
-        if (player.getName() != null) {
-            editPlayer.setName(player.getName());
-        }
-        if (player.getTitle() != null) {
-            editPlayer.setTitle(player.getTitle());
-        }
-        if (player.getRace() != null) {
-            editPlayer.setRace(player.getRace());
-        }
-        if (player.getProfession() != null) {
-            editPlayer.setProfession(player.getProfession());
-        }
-        if (player.getBirthday() != null) {
-            editPlayer.setBirthday(player.getBirthday());
-        }
-        if (player.getBanned() != null) {
-            editPlayer.setBanned(player.getBanned());
-        }
-        if (player.getExperience() != null) {
-            editPlayer.setExperience(player.getExperience());
-        }
-
-        editPlayer.setLevel(player.getLevel());
-        editPlayer.setUntilNextLevel(player.getUntilNextLevel());
-
-        return editPlayer;
+    public Integer getAllPlayersCount(Filter filter) {
+        return getPlayerByFilter(filter).size(); //TODO это неоптимально
     }
 
     @Override
     public void deletePlayerById(Long id) {
         playerStorage.remove(id);
+    }
+
+    private int comparePlayerByFilter(Player a, Player b, Filter filter) {
+        if (filter.getOrder() == PlayerOrder.ID) {
+            return a.getId().compareTo(b.getId());
+        } else if (filter.getOrder() == PlayerOrder.NAME) {
+            return a.getName().compareTo(b.getName());
+        } else if (filter.getOrder() == PlayerOrder.EXPERIENCE) {
+            return a.getExperience().compareTo(b.getExperience());
+        } else if (filter.getOrder() == PlayerOrder.BIRTHDAY) {
+            return a.getBirthday().compareTo(b.getBirthday());
+        } else if (filter.getOrder() == PlayerOrder.LEVEL) {
+            return a.getLevel().compareTo(b.getLevel());
+        }
+        return 0;
     }
 }
