@@ -33,20 +33,12 @@ public class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public List<PlayerResponse> getAllPlayers() {
-        return playerService.getAllPlayers().stream()
-                .map(PlayerMapper::convertPlayerDtoToPlayerResponse)
-                .toList();
-    }
-
-    @Override
     public List<PlayerResponse> getPlayerByFilter(Filter filter) {
         List<PlayerDto> receivedPlayers = playerService.getPlayerByFilter(filter);
         return receivedPlayers.stream()
                 .map(PlayerMapper::convertPlayerDtoToPlayerResponse)
                 .toList();
     }
-
 
     @Override
     public Integer getAllPlayerCount(@RequestParam(required = false) String name,
@@ -58,12 +50,12 @@ public class PlayerControllerImpl implements PlayerController {
                                      @RequestParam(required = false) Boolean banned,
                                      @RequestParam(required = false) Integer minExperience,
                                      @RequestParam(required = false) Integer maxExperience,
-                                     @RequestParam(required = false) Integer minLevel,
+                                     @RequestParam(required = false) Integer minLevel, //TODO Опитимиризовать
                                      @RequestParam(required = false) Integer maxLevel) {
 
         Filter filter = PlayerMapper.convertRequestParamsToFilter(name, title, race, profession, after, before, banned,
                 minExperience, maxExperience, minLevel, maxLevel, null, null, null);
-        return playerService.getAllPlayersCount(filter); //TODO вынести на сторону репозитория/хранилища
+        return playerService.getAllPlayersCount(filter);
     }
 
     @Override

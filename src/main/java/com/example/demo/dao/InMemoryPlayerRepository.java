@@ -43,7 +43,11 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     @Override
     public Player save(Player player) {
         Player newPlayer = new Player();
-        newPlayer.setId(++id);
+        if(player.getId() == null) {
+            newPlayer.setId(++id);
+        } else {
+            newPlayer.setId(player.getId());
+        }
         newPlayer.setName(player.getName());
         newPlayer.setTitle(player.getTitle());
         newPlayer.setRace(player.getRace());
@@ -59,15 +63,10 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     }
 
     @Override
-    public List<Player> getAllPlayers() {
-        return List.copyOf(playerStorage.values());
-    }
-
-    @Override
     public List<Player> getPlayerByFilter(Filter filter) {
         return playerStorage.values().stream()
                 .filter(FilterPredicateBuilder.buildPredicate(filter))
-                .sorted((a, b) -> comparePlayerByFilter(a, b, filter))//TODO вынести в отдельный метод именно Comparator
+                .sorted(new PlayerComparator(filter))//TODO вынести в отдельный метод именно Comparator
                 .skip(filter.getPageNumber() == null || filter.getPageSize() == null ? 0 : (long) filter.getPageNumber() * filter.getPageSize())
                 .limit(filter.getPageSize() == null ? 1000000000 : filter.getPageSize())
                 .toList();
@@ -79,26 +78,14 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     }
 
     public Integer getAllPlayersCount(Filter filter) {
-        return getPlayerByFilter(filter).size(); //TODO это неоптимально
+        return playerStorage.values().stream()
+                .filter(FilterPredicateBuilder.buildPredicate(filter))
+                .toList()
+                .size(); //TODO это неоптимально
     }
 
     @Override
     public void deletePlayerById(Long id) {
         playerStorage.remove(id);
-    }
-
-    private int comparePlayerByFilter(Player a, Player b, Filter filter) {
-        if (filter.getOrder() == PlayerOrder.ID) {
-            return a.getId().compareTo(b.getId());
-        } else if (filter.getOrder() == PlayerOrder.NAME) {
-            return a.getName().compareTo(b.getName());
-        } else if (filter.getOrder() == PlayerOrder.EXPERIENCE) {
-            return a.getExperience().compareTo(b.getExperience());
-        } else if (filter.getOrder() == PlayerOrder.BIRTHDAY) {
-            return a.getBirthday().compareTo(b.getBirthday());
-        } else if (filter.getOrder() == PlayerOrder.LEVEL) {
-            return a.getLevel().compareTo(b.getLevel());
-        }
-        return 0;
     }
 }

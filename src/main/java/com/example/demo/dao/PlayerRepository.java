@@ -8,8 +8,6 @@ import java.util.List;
 public interface PlayerRepository {
     Player save(Player player);
 
-    List<Player> getAllPlayers();
-
     List<Player> getPlayerByFilter(Filter filter);
 
     Player getPlayerById(Long id);

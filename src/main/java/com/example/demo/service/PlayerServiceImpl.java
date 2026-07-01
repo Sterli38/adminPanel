@@ -27,13 +27,6 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public List<PlayerDto> getAllPlayers() {
-        return playerRepository.getAllPlayers().stream()
-                .map(PlayerMapper::convertPlayerToPlayerDto)
-                .toList();
-    }
-
-    @Override
     public List<PlayerDto> getPlayerByFilter(Filter filter) {
         return playerRepository.getPlayerByFilter(filter).stream()
                 .map(PlayerMapper::convertPlayerToPlayerDto)
@@ -52,6 +45,7 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public PlayerDto editPlayer(Long id, PlayerDto playerDto) { //TODO метод работает некорректно. сохраняется новый игрок при обновлении, а старый остается
         Player playerToUpdate = PlayerMapper.convertPlayerDtoToPlayer(getPlayerById(id));
+        playerToUpdate.setId(id);
 
         if (playerDto.getName() != null) {
             playerToUpdate.setName(playerDto.getName());

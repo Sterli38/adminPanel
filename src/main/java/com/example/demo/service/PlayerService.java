@@ -8,8 +8,6 @@ import java.util.List;
 public interface PlayerService {
     PlayerDto create(PlayerDto playerDto);
 
-    List<PlayerDto> getAllPlayers();
-
     List<PlayerDto> getPlayerByFilter(Filter filter);
 
     PlayerDto getPlayerById(Long id);

@@ -22,10 +22,6 @@ import java.util.List;
 public interface PlayerController {
     @PostMapping
     PlayerResponse create(@Valid @RequestBody CreatePlayerRequest createPlayerRequest);
-
-    @GetMapping("/getAllPlayers")
-    List<PlayerResponse> getAllPlayers(); //TODO удалить
-
     @GetMapping
     List<PlayerResponse> getPlayerByFilter(Filter filter);
 
