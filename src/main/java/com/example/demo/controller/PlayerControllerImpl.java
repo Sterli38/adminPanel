@@ -3,8 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
 import com.example.demo.controller.response.PlayerResponse;
-import com.example.demo.entity.Profession;
-import com.example.demo.entity.Race;
 import com.example.demo.filter.Filter;
 import com.example.demo.service.PlayerService;
 import com.example.demo.service.dto.PlayerDto;
@@ -12,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -41,20 +38,7 @@ public class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public Integer getAllPlayerCount(@RequestParam(required = false) String name,
-                                     @RequestParam(required = false) String title,
-                                     @RequestParam(required = false) Race race,
-                                     @RequestParam(required = false) Profession profession,
-                                     @RequestParam(required = false) Long after,
-                                     @RequestParam(required = false) Long before,
-                                     @RequestParam(required = false) Boolean banned,
-                                     @RequestParam(required = false) Integer minExperience,
-                                     @RequestParam(required = false) Integer maxExperience,
-                                     @RequestParam(required = false) Integer minLevel, //TODO Опитимиризовать
-                                     @RequestParam(required = false) Integer maxLevel) {
-
-        Filter filter = PlayerMapper.convertRequestParamsToFilter(name, title, race, profession, after, before, banned,
-                minExperience, maxExperience, minLevel, maxLevel, null, null, null);
+    public Integer getAllPlayerCount(Filter filter) {
         return playerService.getAllPlayersCount(filter);
     }
 
