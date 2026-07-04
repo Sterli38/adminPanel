@@ -4,7 +4,8 @@ import com.example.demo.controller.PlayerMapper;
 import com.example.demo.dao.PlayerRepository;
 import com.example.demo.entity.Player;
 import com.example.demo.filter.Filter;
-import com.example.demo.service.dto.PlayerDto;
+import com.example.demo.service.dto.CreatePlayerDto;
+import com.example.demo.service.dto.FullPlayerDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,26 +17,27 @@ public class PlayerServiceImpl implements PlayerService {
     private final PlayerRepository playerRepository;
 
     @Override
-    public PlayerDto create(PlayerDto playerDto) {
-        Player dto = PlayerMapper.convertPlayerDtoToPlayer(playerDto);
-
-        dto.setLevel(calculateLevel(dto.getExperience()));
-        dto.setUntilNextLevel(calculateUntilNextLevel(dto.getLevel(), dto.getExperience()));
+    public FullPlayerDto create(CreatePlayerDto createPlayerDto) {
+        Player dto = PlayerMapper.convertPlayerDtoToPlayer(createPlayerDto);
 
         Player createdPlayer = playerRepository.save(dto);
-        return PlayerMapper.convertPlayerToPlayerDto(createdPlayer);
+
+        createdPlayer.setLevel(calculateLevel(dto.getExperience()));
+        createdPlayer.setUntilNextLevel(calculateUntilNextLevel(createdPlayer.getLevel(), dto.getExperience()));
+
+        return PlayerMapper.convertPlayerToResponsePlayerDto(createdPlayer);
     }
 
     @Override
-    public List<PlayerDto> getPlayerByFilter(Filter filter) {
+    public List<FullPlayerDto> getPlayerByFilter(Filter filter) {
         return playerRepository.getPlayerByFilter(filter).stream()
-                .map(PlayerMapper::convertPlayerToPlayerDto)
+                .map(PlayerMapper::convertPlayerToResponsePlayerDto)
                 .toList();
     }
 
     @Override
-    public PlayerDto getPlayerById(Long id) {
-        return PlayerMapper.convertPlayerToPlayerDto(playerRepository.getPlayerById(id));
+    public FullPlayerDto getPlayerById(Long id) {
+        return PlayerMapper.convertPlayerToResponsePlayerDto(playerRepository.getPlayerById(id));
     }
 
     public Integer getAllPlayersCount(Filter filter) {
@@ -43,37 +45,37 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public PlayerDto editPlayer(Long id, PlayerDto playerDto) { //TODO метод работает некорректно. сохраняется новый игрок при обновлении, а старый остается
+    public FullPlayerDto editPlayer(Long id, CreatePlayerDto createPlayerDto) {
         Player playerToUpdate = PlayerMapper.convertPlayerDtoToPlayer(getPlayerById(id));
         playerToUpdate.setId(id);
 
-        if (playerDto.getName() != null) {
-            playerToUpdate.setName(playerDto.getName());
+        if (createPlayerDto.getName() != null) {
+            playerToUpdate.setName(createPlayerDto.getName());
         }
-        if (playerDto.getTitle() != null) {
-            playerToUpdate.setTitle(playerDto.getTitle());
+        if (createPlayerDto.getTitle() != null) {
+            playerToUpdate.setTitle(createPlayerDto.getTitle());
         }
-        if (playerDto.getRace() != null) {
-            playerToUpdate.setRace(playerDto.getRace());
+        if (createPlayerDto.getRace() != null) {
+            playerToUpdate.setRace(createPlayerDto.getRace());
         }
-        if (playerDto.getProfession() != null) {
-            playerToUpdate.setProfession(playerDto.getProfession());
+        if (createPlayerDto.getProfession() != null) {
+            playerToUpdate.setProfession(createPlayerDto.getProfession());
         }
-        if (playerDto.getBirthday() != null) {
-            playerToUpdate.setBirthday(playerDto.getBirthday());
+        if (createPlayerDto.getBirthday() != null) {
+            playerToUpdate.setBirthday(createPlayerDto.getBirthday());
         }
-        if (playerDto.getBanned() != null) {
-            playerToUpdate.setBanned(playerDto.getBanned());
+        if (createPlayerDto.getBanned() != null) {
+            playerToUpdate.setBanned(createPlayerDto.getBanned());
         }
-        if (playerDto.getExperience() != null) {
-            playerToUpdate.setExperience(playerDto.getExperience());
+        if (createPlayerDto.getExperience() != null) {
+            playerToUpdate.setExperience(createPlayerDto.getExperience());
         }
 
         playerToUpdate.setLevel(calculateLevel(playerToUpdate.getExperience()));
         playerToUpdate.setUntilNextLevel(calculateUntilNextLevel(playerToUpdate.getLevel(), playerToUpdate.getExperience()));
 
         Player savedPlayer = playerRepository.save(playerToUpdate);
-        return PlayerMapper.convertPlayerToPlayerDto(savedPlayer);
+        return PlayerMapper.convertPlayerToResponsePlayerDto(savedPlayer);
     }
 
     @Override

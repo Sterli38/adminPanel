@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
+import com.example.demo.controller.response.PlayerCountResponse;
 import com.example.demo.controller.response.PlayerResponse;
 import com.example.demo.filter.Filter;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
@@ -20,10 +22,10 @@ public interface PlayerController {
     @PostMapping
     PlayerResponse create(@Valid @RequestBody CreatePlayerRequest createPlayerRequest);
     @GetMapping
-    List<PlayerResponse> getPlayerByFilter(Filter filter);
+    List<PlayerResponse> getPlayerByFilter(@RequestParam Filter filter);
 
     @GetMapping("/count")
-    Integer getAllPlayerCount(Filter filter);
+    PlayerCountResponse getAllPlayerCount(@RequestParam Filter filter);
 
     @GetMapping("/{id}")
     PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id);

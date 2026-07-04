@@ -12,8 +12,13 @@ public class PlayerComparator implements Comparator<Player> {
     PlayerComparator(Filter filter) {
         this.filter = filter;
     }
+
     @Override
     public int compare(Player a, Player b) {
+        if (filter == null || filter.getOrder() == null) {
+            return a.getId().compareTo(b.getId());
+        }
+
         if (filter.getOrder() == PlayerOrder.ID) {
             return a.getId().compareTo(b.getId());
         } else if (filter.getOrder() == PlayerOrder.NAME) {

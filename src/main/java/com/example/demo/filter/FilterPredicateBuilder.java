@@ -8,6 +8,10 @@ public class FilterPredicateBuilder {
     public static Predicate<Player> buildPredicate(Filter filter) {
         Predicate<Player> predicate = player -> true;
 
+        if (filter == null) {
+            return predicate;
+        }
+
         if (filter.getName() != null) {
             predicate = predicate.and(player -> player.getName().toLowerCase().contains(filter.getName().toLowerCase()));
         }

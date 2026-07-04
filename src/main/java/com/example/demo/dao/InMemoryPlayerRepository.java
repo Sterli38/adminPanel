@@ -66,10 +66,42 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     public List<Player> getPlayerByFilter(Filter filter) {
         return playerStorage.values().stream()
                 .filter(FilterPredicateBuilder.buildPredicate(filter))
-                .sorted(new PlayerComparator(filter))//TODO вынести в отдельный метод именно Comparator
-                .skip(filter.getPageNumber() == null || filter.getPageSize() == null ? 0 : (long) filter.getPageNumber() * filter.getPageSize())
-                .limit(filter.getPageSize() == null ? 1000000000 : filter.getPageSize())
+                .sorted(new PlayerComparator(filter))
+                .skip(getSkip(filter))
+                .limit(getLimit(filter))
                 .toList();
+    }
+
+    private int getSkip(Filter filter) {
+        if(filter == null) {
+            return 0;
+        }
+
+        int pageNumber = 0;
+        if (filter.getPageNumber() != null) {
+            pageNumber = filter.getPageNumber();
+        }
+
+        int pageSize = 3;
+        if (filter.getPageSize() != null) {
+            pageSize = filter.getPageSize();
+        }
+
+        return pageNumber * pageSize;
+    }
+
+    private int getLimit(Filter filter) {
+        int pageSize = 3;
+
+        if(filter == null) {
+            return pageSize;
+        }
+
+        if(filter.getPageSize() != null) {
+            pageSize = filter.getPageSize();
+        }
+
+        return pageSize;
     }
 
     @Override
@@ -78,14 +110,18 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     }
 
     public Integer getAllPlayersCount(Filter filter) {
-        return playerStorage.values().stream()
+        return (int) playerStorage.values().stream()
                 .filter(FilterPredicateBuilder.buildPredicate(filter))
-                .toList()
-                .size(); //TODO это неоптимально
+                .count();
     }
 
     @Override
     public void deletePlayerById(Long id) {
         playerStorage.remove(id);
+    }
+
+    public void clear() {
+        playerStorage.clear();
+        id = 0L;
     }
 }

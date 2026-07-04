@@ -2,14 +2,18 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
+import com.example.demo.controller.response.PlayerCountResponse;
 import com.example.demo.controller.response.PlayerResponse;
 import com.example.demo.filter.Filter;
 import com.example.demo.service.PlayerService;
-import com.example.demo.service.dto.PlayerDto;
+import com.example.demo.service.dto.CreatePlayerDto;
+import com.example.demo.service.dto.FullPlayerDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -24,34 +28,34 @@ public class PlayerControllerImpl implements PlayerController {
 
     @Override
     public PlayerResponse create(@Valid @RequestBody CreatePlayerRequest createPlayerRequest) {
-        PlayerDto playerDto = PlayerMapper.convertPlayerRequestToPlayerDto(createPlayerRequest); //TODO тут и в других местах может быть избыточен playerdto. проверить и исправить
-        PlayerDto createdPlayer = playerService.create(playerDto);
-        return PlayerMapper.convertPlayerDtoToPlayerResponse(createdPlayer);
+        CreatePlayerDto createPlayerDto = PlayerMapper.convertPlayerRequestToPlayerDto(createPlayerRequest);
+        FullPlayerDto createdPlayer = playerService.create(createPlayerDto);
+        return PlayerMapper.convertResponsePlayerDtoToPlayerResponse(createdPlayer);
     }
 
     @Override
-    public List<PlayerResponse> getPlayerByFilter(Filter filter) {
-        List<PlayerDto> receivedPlayers = playerService.getPlayerByFilter(filter);
+    public List<PlayerResponse> getPlayerByFilter(@RequestParam Filter filter) {
+        List<FullPlayerDto> receivedPlayers = playerService.getPlayerByFilter(filter);
         return receivedPlayers.stream()
-                .map(PlayerMapper::convertPlayerDtoToPlayerResponse)
+                .map(PlayerMapper::convertResponsePlayerDtoToPlayerResponse)
                 .toList();
     }
 
     @Override
-    public Integer getAllPlayerCount(Filter filter) {
-        return playerService.getAllPlayersCount(filter);
+    public PlayerCountResponse getAllPlayerCount(@RequestParam Filter filter) {
+        return PlayerMapper.convertPlayerCountToPlayerCountResponse(playerService.getAllPlayersCount(filter));
     }
 
     @Override
     public PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id) {
-        return PlayerMapper.convertPlayerDtoToPlayerResponse(playerService.getPlayerById(id));
+        return PlayerMapper.convertResponsePlayerDtoToPlayerResponse(playerService.getPlayerById(id));
     }
 
     @Override
     public PlayerResponse editPlayer(@PositiveOrZero @PathVariable  Long id, @RequestBody EditPlayerRequest editPlayerRequest) {
-        PlayerDto playerDto = PlayerMapper.convertPlayerRequestToPlayerDto(editPlayerRequest);
-        PlayerDto editPLayer = playerService.editPlayer(id, playerDto);
-        return PlayerMapper.convertPlayerDtoToPlayerResponse(editPLayer);
+        CreatePlayerDto createPlayerDto = PlayerMapper.convertPlayerRequestToPlayerDto(editPlayerRequest);
+        FullPlayerDto editPLayer = playerService.editPlayer(id, createPlayerDto);
+        return PlayerMapper.convertResponsePlayerDtoToPlayerResponse(editPLayer);
     }
 
     @Override

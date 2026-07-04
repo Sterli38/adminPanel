@@ -1,20 +1,21 @@
 package com.example.demo.service;
 
 import com.example.demo.filter.Filter;
-import com.example.demo.service.dto.PlayerDto;
+import com.example.demo.service.dto.CreatePlayerDto;
+import com.example.demo.service.dto.FullPlayerDto;
 
 import java.util.List;
 
 public interface PlayerService {
-    PlayerDto create(PlayerDto playerDto);
+    FullPlayerDto create(CreatePlayerDto createPlayerDto);
 
-    List<PlayerDto> getPlayerByFilter(Filter filter);
+    List<FullPlayerDto> getPlayerByFilter(Filter filter);
 
-    PlayerDto getPlayerById(Long id);
+    FullPlayerDto getPlayerById(Long id);
 
     Integer getAllPlayersCount(Filter filter);
 
-    PlayerDto editPlayer(Long id, PlayerDto playerDto);
+    FullPlayerDto editPlayer(Long id, CreatePlayerDto createPlayerDto);
 
     void deletePlayerById(Long id);
 }
