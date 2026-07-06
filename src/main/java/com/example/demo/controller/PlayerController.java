@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
@@ -22,10 +21,10 @@ public interface PlayerController {
     @PostMapping
     PlayerResponse create(@Valid @RequestBody CreatePlayerRequest createPlayerRequest);
     @GetMapping
-    List<PlayerResponse> getPlayerByFilter(@RequestParam Filter filter);
+    List<PlayerResponse> getPlayerByFilter(Filter filter);
 
     @GetMapping("/count")
-    PlayerCountResponse getAllPlayerCount(@RequestParam Filter filter);
+    PlayerCountResponse getAllPlayerCount(Filter filter);
 
     @GetMapping("/{id}")
     PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id);

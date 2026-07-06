@@ -10,10 +10,8 @@ import com.example.demo.service.dto.CreatePlayerDto;
 import com.example.demo.service.dto.FullPlayerDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -34,7 +32,7 @@ public class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public List<PlayerResponse> getPlayerByFilter(@RequestParam Filter filter) {
+    public List<PlayerResponse> getPlayerByFilter(Filter filter) {
         List<FullPlayerDto> receivedPlayers = playerService.getPlayerByFilter(filter);
         return receivedPlayers.stream()
                 .map(PlayerMapper::convertResponsePlayerDtoToPlayerResponse)
@@ -42,7 +40,7 @@ public class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public PlayerCountResponse getAllPlayerCount(@RequestParam Filter filter) {
+    public PlayerCountResponse getAllPlayerCount(Filter filter) {
         return PlayerMapper.convertPlayerCountToPlayerCountResponse(playerService.getAllPlayersCount(filter));
     }
 
