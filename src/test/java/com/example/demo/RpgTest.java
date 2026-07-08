@@ -73,7 +73,7 @@ class RpgTest {
 
     @Test
     public void createInvalidPlayerTest() {
-
+        //TODO реализовать
     }
 
     @Test
@@ -125,7 +125,7 @@ class RpgTest {
                 .andExpect(jsonPath("$[0].banned").value(false))
                 .andExpect(jsonPath("$[0].experience").value(1000))
                 .andExpect(jsonPath("$[0].level").value(4))
-                .andExpect(jsonPath("$[0].untilNextLevel").value(500))
+                .andExpect(jsonPath("$[0].untilNextLevel").value(500)) //TODO сделать проверку на второго игрока
                 .andExpect(jsonPath("$", hasSize(2)));
 
     }
@@ -160,6 +160,7 @@ class RpgTest {
                         get("/rest/players")
                                 .param("Title", filter.getTitle()))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("testPlayer"))
                 .andExpect(jsonPath("$[0].title").value("testTitleTitle"))
@@ -169,8 +170,7 @@ class RpgTest {
                 .andExpect(jsonPath("$[0].banned").value(false))
                 .andExpect(jsonPath("$[0].experience").value(1000))
                 .andExpect(jsonPath("$[0].level").value(4))
-                .andExpect(jsonPath("$[0].untilNextLevel").value(500))
-                .andExpect(jsonPath("$", hasSize(1))); //TODO во всех подобных методах сделать проверку на длину списка
+                .andExpect(jsonPath("$[0].untilNextLevel").value(500));
 
     }
 
@@ -684,7 +684,7 @@ class RpgTest {
         playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer1));
 
         mockMvc.perform(
-                        get("/rest/players/1"))
+                        get("/rest/players/1")) //TODO проверяем именно созданного игрока, айди которого мы получем на шаге выше
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("testPlayer"))
                 .andExpect(jsonPath("$.title").value("testTitle"))
@@ -779,5 +779,7 @@ class RpgTest {
         mockMvc.perform(
                         delete("/rest/players/50"))
                 .andExpect(status().isOk());
+
+        //TODO сделать прверку что он реально удалился
     }
 }

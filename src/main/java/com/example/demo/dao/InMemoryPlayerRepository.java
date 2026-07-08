@@ -6,6 +6,7 @@ import com.example.demo.entity.Race;
 import com.example.demo.filter.Filter;
 import com.example.demo.filter.FilterPredicateBuilder;
 import com.example.demo.filter.PlayerOrder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -17,11 +18,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class InMemoryPlayerRepository implements PlayerRepository {
+    private final boolean isTestDataEnabled;
+
     private Long id = 0L;
     private final Map<Long, Player> playerStorage = new ConcurrentHashMap<>();
 
+    public InMemoryPlayerRepository(@Value("${test.data.enabled}") boolean isTestDataEnabled) {
+        this.isTestDataEnabled = isTestDataEnabled;
+    }
+
     @PostConstruct
     private void initData() {
+        if (!isTestDataEnabled) {
+            return;
+        }
+
         Random random = new Random();
         for (int i = 1; i < 50; i++) {
             Player player = new Player();
