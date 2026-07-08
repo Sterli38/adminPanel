@@ -20,10 +20,10 @@ public class PlayerServiceImpl implements PlayerService {
     public FullPlayerDto create(CreatePlayerDto createPlayerDto) {
         Player dto = PlayerMapper.convertPlayerDtoToPlayer(createPlayerDto);
 
-        Player createdPlayer = playerRepository.save(dto);
+        dto.setLevel(calculateLevel(dto.getExperience()));
+        dto.setUntilNextLevel(calculateUntilNextLevel(dto.getLevel(), dto.getExperience()));
 
-        createdPlayer.setLevel(calculateLevel(dto.getExperience()));
-        createdPlayer.setUntilNextLevel(calculateUntilNextLevel(createdPlayer.getLevel(), dto.getExperience()));
+        Player createdPlayer = playerRepository.save(dto);
 
         return PlayerMapper.convertPlayerToResponsePlayerDto(createdPlayer);
     }

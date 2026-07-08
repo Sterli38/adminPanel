@@ -6,6 +6,7 @@ import com.example.demo.entity.Race;
 import com.example.demo.filter.Filter;
 import com.example.demo.filter.FilterPredicateBuilder;
 import com.example.demo.filter.PlayerOrder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+@ConditionalOnProperty(name = "repository.type", havingValue = "inMemory")
 @Repository
 public class InMemoryPlayerRepository implements PlayerRepository {
     private Long id = 0L;
