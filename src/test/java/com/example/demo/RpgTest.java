@@ -138,7 +138,7 @@ class RpgTest {
                 .andExpect(jsonPath("$[0].banned").value(false))
                 .andExpect(jsonPath("$[0].experience").value(1000))
                 .andExpect(jsonPath("$[0].level").value(4))
-                .andExpect(jsonPath("$[0].untilNextLevel").value(500)); //TODO во всех подобных методах сделать проверку на длину списка
+                .andExpect(jsonPath("$[0].untilNextLevel").value(500)); //
 
     }
 

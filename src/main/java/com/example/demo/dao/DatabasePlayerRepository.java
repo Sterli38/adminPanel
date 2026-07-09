@@ -19,10 +19,12 @@ public class DatabasePlayerRepository implements PlayerRepository {
 
     @Override
     public Player save(Player player) {
-        String savePlayerSql = "INSERT INTO players(" +
+        //TODO попробовать SimpleJdbcInsert
+
+        String savePlayerSql = "INSERT INTO players(" + //TODO вынести в отдельный интерфейс, название таблиц в единственном числе
                 "name, title, race_id, profession_id, experience, level, untilNextLevel, birthday, banned)" +
                 " values(" +
-                "?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "?, ?, (SELECT id FROM race WHERE name = ?), ?, ?, ?, ?, ?, ?)"; //TODO оздапросы делаем
 
         String getRaceId = "SELECT id FROM race WHERE name = ?";
         String getProfessionId = "SELECT id FROM profession WHERE name = ?";
@@ -68,8 +70,7 @@ public class DatabasePlayerRepository implements PlayerRepository {
                 JOIN profession on players.profession_id = profession.id
                 WHERE players.id = ?    
                 """;
-        Player player = jdbcTemplate.queryForObject(getPlayerByIdSql, new PlayerRowMapper(), id);
-        return player;
+        return jdbcTemplate.queryForObject(getPlayerByIdSql, new PlayerRowMapper(), id);
     }
 
     @Override
