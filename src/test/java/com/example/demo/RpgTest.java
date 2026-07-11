@@ -9,7 +9,10 @@ import com.example.demo.entity.Race;
 import com.example.demo.filter.Filter;
 import com.example.demo.filter.PlayerOrder;
 import com.example.demo.service.PlayerService;
+import com.example.demo.service.dto.CreatePlayerDto;
+import com.example.demo.service.dto.FullPlayerDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Date;
+import java.util.List;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -72,14 +79,27 @@ class RpgTest {
     }
 
     @Test
-    public void createInvalidPlayerTest() {
-        //TODO реализовать
+    public void createInvalidPlayerTest() throws Exception {
+        CreatePlayerRequest createPlayerRequest = new CreatePlayerRequest();
+        createPlayerRequest.setName("asfasfsaasfasfassafasfafasfasfafas");
+        createPlayerRequest.setTitle("title");
+        createPlayerRequest.setRace(Race.HUMAN);
+        createPlayerRequest.setProfession(Profession.PALADIN);
+        createPlayerRequest.setBirthday(1640995200000L);
+        createPlayerRequest.setBanned(false);
+        createPlayerRequest.setExperience(1000);
+
+        mockMvc.perform(
+                post("/rest/players")
+                        .content(objectMapper.writeValueAsString(createPlayerRequest))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void getPlayerByFilterByNameTest() throws Exception {
         CreatePlayerRequest expectedTestPlayer1 = new CreatePlayerRequest();
-        expectedTestPlayer1.setName("testPlayer");
+        expectedTestPlayer1.setName("testPlayer1");
         expectedTestPlayer1.setTitle("testTitle");
         expectedTestPlayer1.setRace(Race.HUMAN);
         expectedTestPlayer1.setProfession(Profession.PALADIN);
@@ -116,8 +136,9 @@ class RpgTest {
                         get("/rest/players")
                                 .param("name", filter.getName()))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").isNumber())
-                .andExpect(jsonPath("$[0].name").value("testPlayer"))
+                .andExpect(jsonPath("$[0].name").value("testPlayer1"))
                 .andExpect(jsonPath("$[0].title").value("testTitle"))
                 .andExpect(jsonPath("$[0].race").value(Race.HUMAN.name()))
                 .andExpect(jsonPath("$[0].profession").value(Profession.PALADIN.name()))
@@ -125,8 +146,17 @@ class RpgTest {
                 .andExpect(jsonPath("$[0].banned").value(false))
                 .andExpect(jsonPath("$[0].experience").value(1000))
                 .andExpect(jsonPath("$[0].level").value(4))
-                .andExpect(jsonPath("$[0].untilNextLevel").value(500)) //TODO сделать проверку на второго игрока
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$[0].untilNextLevel").value(500))
+                .andExpect(jsonPath("$[1].id").isNumber())
+                .andExpect(jsonPath("$[1].name").value("testPlayer2"))
+                .andExpect(jsonPath("$[1].title").value("testTitle"))
+                .andExpect(jsonPath("$[1].race").value(Race.HUMAN.name()))
+                .andExpect(jsonPath("$[1].profession").value(Profession.PALADIN.name()))
+                .andExpect(jsonPath("$[1].birthday").value(1673481600000L))
+                .andExpect(jsonPath("$[1].banned").value(false))
+                .andExpect(jsonPath("$[1].experience").value(1000))
+                .andExpect(jsonPath("$[1].level").value(4))
+                .andExpect(jsonPath("$[1].untilNextLevel").value(500));
 
     }
 
@@ -141,6 +171,15 @@ class RpgTest {
         expectedTestPlayer1.setBirthday(1673481600000L);
         expectedTestPlayer1.setBanned(false);
 
+        CreatePlayerRequest expectedTestPlayer2 = new CreatePlayerRequest();
+        expectedTestPlayer2.setName("testPlayer");
+        expectedTestPlayer2.setTitle("testTitle");
+        expectedTestPlayer2.setRace(Race.HUMAN);
+        expectedTestPlayer2.setProfession(Profession.PALADIN);
+        expectedTestPlayer2.setExperience(1000);
+        expectedTestPlayer2.setBirthday(1673481600000L);
+        expectedTestPlayer2.setBanned(false);
+
         CreatePlayerRequest nonMatchingPlayer = new CreatePlayerRequest();
         nonMatchingPlayer.setName("testPlayer");
         nonMatchingPlayer.setTitle("test");
@@ -151,6 +190,7 @@ class RpgTest {
         nonMatchingPlayer.setBanned(false);
 
         playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer1));
+        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer2));
         playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(nonMatchingPlayer));
 
         Filter filter = new Filter();
@@ -160,7 +200,7 @@ class RpgTest {
                         get("/rest/players")
                                 .param("Title", filter.getTitle()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("testPlayer"))
                 .andExpect(jsonPath("$[0].title").value("testTitleTitle"))
@@ -170,8 +210,17 @@ class RpgTest {
                 .andExpect(jsonPath("$[0].banned").value(false))
                 .andExpect(jsonPath("$[0].experience").value(1000))
                 .andExpect(jsonPath("$[0].level").value(4))
-                .andExpect(jsonPath("$[0].untilNextLevel").value(500));
-
+                .andExpect(jsonPath("$[0].untilNextLevel").value(500))
+                .andExpect(jsonPath("$[1].id").isNumber())
+                .andExpect(jsonPath("$[1].name").value("testPlayer"))
+                .andExpect(jsonPath("$[1].title").value("testTitle"))
+                .andExpect(jsonPath("$[1].race").value(Race.HUMAN.name()))
+                .andExpect(jsonPath("$[1].profession").value(Profession.PALADIN.name()))
+                .andExpect(jsonPath("$[1].birthday").value(1673481600000L))
+                .andExpect(jsonPath("$[1].banned").value(false))
+                .andExpect(jsonPath("$[1].experience").value(1000))
+                .andExpect(jsonPath("$[1].level").value(4))
+                .andExpect(jsonPath("$[1].untilNextLevel").value(500));
     }
 
     @Test
@@ -185,6 +234,15 @@ class RpgTest {
         expectedTestPlayer1.setBirthday(1673481600000L);
         expectedTestPlayer1.setBanned(false);
 
+        CreatePlayerRequest expectedTestPlayer2 = new CreatePlayerRequest();
+        expectedTestPlayer2.setName("testPlayer2");
+        expectedTestPlayer2.setTitle("testTitle");
+        expectedTestPlayer2.setRace(Race.HUMAN);
+        expectedTestPlayer2.setProfession(Profession.PALADIN);
+        expectedTestPlayer2.setExperience(1000);
+        expectedTestPlayer2.setBirthday(1673481600000L);
+        expectedTestPlayer2.setBanned(false);
+
         CreatePlayerRequest nonMatchingPlayer = new CreatePlayerRequest();
         nonMatchingPlayer.setName("testPlayer");
         nonMatchingPlayer.setTitle("testTitle");
@@ -195,6 +253,7 @@ class RpgTest {
         nonMatchingPlayer.setBanned(false);
 
         playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer1));
+        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer2));
         playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(nonMatchingPlayer));
 
         Filter filter = new Filter();
@@ -203,6 +262,8 @@ class RpgTest {
         mockMvc.perform(
                         get("/rest/players")
                                 .param("Race", filter.getRace().name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("testPlayer"))
                 .andExpect(jsonPath("$[0].title").value("testTitle"))
@@ -213,7 +274,17 @@ class RpgTest {
                 .andExpect(jsonPath("$[0].experience").value(1000))
                 .andExpect(jsonPath("$[0].level").value(4))
                 .andExpect(jsonPath("$[0].untilNextLevel").value(500))
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$[1].id").isNumber())
+                .andExpect(jsonPath("$[1].name").value("testPlayer2"))
+                .andExpect(jsonPath("$[1].title").value("testTitle"))
+                .andExpect(jsonPath("$[1].race").value(Race.HUMAN.name()))
+                .andExpect(jsonPath("$[1].profession").value(Profession.PALADIN.name()))
+                .andExpect(jsonPath("$[1].birthday").value(1673481600000L))
+                .andExpect(jsonPath("$[1].banned").value(false))
+                .andExpect(jsonPath("$[1].experience").value(1000))
+                .andExpect(jsonPath("$[1].level").value(4))
+                .andExpect(jsonPath("$[1].untilNextLevel").value(500));
+
     }
 
     @Test
@@ -255,6 +326,8 @@ class RpgTest {
         mockMvc.perform(
                         get("/rest/players")
                                 .param("Profession", filter.getProfession().name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("testPlayer"))
                 .andExpect(jsonPath("$[0].title").value("testTitle"))
@@ -265,7 +338,16 @@ class RpgTest {
                 .andExpect(jsonPath("$[0].experience").value(1000))
                 .andExpect(jsonPath("$[0].level").value(4))
                 .andExpect(jsonPath("$[0].untilNextLevel").value(500))
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$[1].id").isNumber())
+                .andExpect(jsonPath("$[1].name").value("testPlayer"))
+                .andExpect(jsonPath("$[1].title").value("testTitle"))
+                .andExpect(jsonPath("$[1].race").value(Race.HUMAN.name()))
+                .andExpect(jsonPath("$[1].profession").value(Profession.PALADIN.name()))
+                .andExpect(jsonPath("$[1].birthday").value(1673481600000L))
+                .andExpect(jsonPath("$[1].banned").value(false))
+                .andExpect(jsonPath("$[1].experience").value(1000))
+                .andExpect(jsonPath("$[1].level").value(4))
+                .andExpect(jsonPath("$[1].untilNextLevel").value(500));
     }
 
     @Test
@@ -320,6 +402,8 @@ class RpgTest {
                         get("/rest/players")
                                 .param("after", filter.getAfter().toString())
                                 .param("before", filter.getBefore().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("testPlayer"))
                 .andExpect(jsonPath("$[0].title").value("testTitle"))
@@ -349,8 +433,7 @@ class RpgTest {
                 .andExpect(jsonPath("$[2].banned").value(false))
                 .andExpect(jsonPath("$[2].experience").value(1000))
                 .andExpect(jsonPath("$[2].level").value(4))
-                .andExpect(jsonPath("$[2].untilNextLevel").value(500))
-                .andExpect(jsonPath("$", hasSize(3)));
+                .andExpect(jsonPath("$[2].untilNextLevel").value(500));
     }
 
     @Test
@@ -394,6 +477,8 @@ class RpgTest {
                         get("/rest/players")
                                 .param("MinExperience", filter.getMinExperience().toString())
                                 .param("MaxExperience", filter.getMaxExperience().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("testPlayer"))
                 .andExpect(jsonPath("$[0].title").value("testTitle"))
@@ -413,8 +498,7 @@ class RpgTest {
                 .andExpect(jsonPath("$[1].banned").value(false))
                 .andExpect(jsonPath("$[1].experience").value(934))
                 .andExpect(jsonPath("$[1].level").value(3))
-                .andExpect(jsonPath("$[1].untilNextLevel").value(66))
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$[1].untilNextLevel").value(66));
     }
 
     @Test
@@ -458,6 +542,8 @@ class RpgTest {
                         get("/rest/players")
                                 .param("MinLevel", filter.getMinLevel().toString())
                                 .param("MaxLevel", filter.getMaxLevel().toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("testPlayer"))
                 .andExpect(jsonPath("$[0].title").value("testTitle"))
@@ -468,17 +554,16 @@ class RpgTest {
                 .andExpect(jsonPath("$[0].experience").value(1000))
                 .andExpect(jsonPath("$[0].level").value(4))
                 .andExpect(jsonPath("$[0].untilNextLevel").value(500))
-                .andExpect(jsonPath("$[0].id").isNumber())
-                .andExpect(jsonPath("$[0].name").value("testPlayer"))
-                .andExpect(jsonPath("$[0].title").value("testTitle"))
-                .andExpect(jsonPath("$[0].race").value(Race.HUMAN.name()))
-                .andExpect(jsonPath("$[0].profession").value(Profession.PALADIN.name()))
-                .andExpect(jsonPath("$[0].birthday").value(1673481600000L))
-                .andExpect(jsonPath("$[0].banned").value(false))
-                .andExpect(jsonPath("$[0].experience").value(1000))
-                .andExpect(jsonPath("$[0].level").value(4))
-                .andExpect(jsonPath("$[0].untilNextLevel").value(500))
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$[1].id").isNumber())
+                .andExpect(jsonPath("$[1].name").value("testPlayer"))
+                .andExpect(jsonPath("$[1].title").value("testTitle"))
+                .andExpect(jsonPath("$[1].race").value(Race.HUMAN.name()))
+                .andExpect(jsonPath("$[1].profession").value(Profession.PALADIN.name()))
+                .andExpect(jsonPath("$[1].birthday").value(1673481600000L))
+                .andExpect(jsonPath("$[1].banned").value(false))
+                .andExpect(jsonPath("$[1].experience").value(2000))
+                .andExpect(jsonPath("$[1].level").value(5))
+                .andExpect(jsonPath("$[1].untilNextLevel").value(100));
     }
 
     @Test
@@ -520,6 +605,7 @@ class RpgTest {
         mockMvc.perform(
                         get("/rest/players")
                                 .param("order", filter.getOrder().name()))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("a"))
                 .andExpect(jsonPath("$[0].title").value("testTitle"))
@@ -591,6 +677,7 @@ class RpgTest {
         mockMvc.perform(
                         get("/rest/players")
                                 .param("order", filter.getOrder().name()))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("c"))
                 .andExpect(jsonPath("$[0].title").value("testTitle"))
@@ -648,6 +735,8 @@ class RpgTest {
 
         mockMvc.perform(
                         get("/rest/players"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("testPlayer"))
                 .andExpect(jsonPath("$[0].title").value("testTitle"))
@@ -681,11 +770,13 @@ class RpgTest {
         expectedTestPlayer1.setBirthday(1673481600000L);
         expectedTestPlayer1.setBanned(false);
 
-        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer1));
+        FullPlayerDto player = playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer1));
+        Long id = player.getId();
 
         mockMvc.perform(
-                        get("/rest/players/1")) //TODO проверяем именно созданного игрока, айди которого мы получем на шаге выше
-                .andExpect(jsonPath("$.id").value(1))
+                        get("/rest/players/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("testPlayer"))
                 .andExpect(jsonPath("$.title").value("testTitle"))
                 .andExpect(jsonPath("$.race").value(Race.HUMAN.name()))
@@ -722,7 +813,8 @@ class RpgTest {
 
         mockMvc.perform(
                         get("/rest/players/count"))
-                .andExpect(jsonPath("$.count").value(2));
+                .andExpect(status().isOk())
+                .andExpect(content().string("2"));
     }
 
     @Test
@@ -736,7 +828,8 @@ class RpgTest {
         testPlayer1.setBirthday(1673481600000L);
         testPlayer1.setBanned(false);
 
-        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(testPlayer1));
+        FullPlayerDto player = playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(testPlayer1));
+        Long id = player.getId();
 
         EditPlayerRequest editPlayerRequest = new EditPlayerRequest();
         editPlayerRequest.setName("newNameForPlayer");
@@ -748,10 +841,11 @@ class RpgTest {
         editPlayerRequest.setExperience(5000);
 
         mockMvc.perform(
-                        post("/rest/players/1")
+                        post("/rest/players/{id}", id)
                                 .content(objectMapper.writeValueAsString(editPlayerRequest))
                                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value("newNameForPlayer"))
                 .andExpect(jsonPath("$.title").value("newTitleForPlayer"))
                 .andExpect(jsonPath("$.race").value(Race.GIANT.name()))
@@ -765,21 +859,22 @@ class RpgTest {
 
     @Test
     public void deletePlayerTest() throws Exception {
-        CreatePlayerRequest testPlayer1 = new CreatePlayerRequest();
-        testPlayer1.setName("testPlayer");
-        testPlayer1.setTitle("testTitle");
-        testPlayer1.setRace(Race.HUMAN);
-        testPlayer1.setProfession(Profession.PALADIN);
-        testPlayer1.setExperience(1000);
-        testPlayer1.setBirthday(1673481600000L);
-        testPlayer1.setBanned(false);
+        CreatePlayerRequest playerForCreation = new CreatePlayerRequest();
+        playerForCreation.setName("testPlayer");
+        playerForCreation.setTitle("testTitle");
+        playerForCreation.setRace(Race.HUMAN);
+        playerForCreation.setProfession(Profession.PALADIN);
+        playerForCreation.setExperience(1000);
+        playerForCreation.setBirthday(1673481600000L);
+        playerForCreation.setBanned(false);
 
-        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(testPlayer1));
+        FullPlayerDto createdPlayerDto = playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(playerForCreation));
 
         mockMvc.perform(
-                        delete("/rest/players/50"))
+                        delete("/rest/players/{id}", createdPlayerDto.getId()))
                 .andExpect(status().isOk());
 
-        //TODO сделать прверку что он реально удалился
+        FullPlayerDto player = playerService.getPlayerById(createdPlayerDto.getId());
+        Assertions.assertNull(player);
     }
 }
