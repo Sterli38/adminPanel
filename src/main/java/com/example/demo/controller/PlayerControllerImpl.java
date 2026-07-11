@@ -45,7 +45,7 @@ public class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id) {
+    public PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id) {// TODO сделать кастомный валидаторо, который будет отдавать 404 если игрока нет
         return PlayerMapper.convertResponsePlayerDtoToPlayerResponse(playerService.getPlayerById(id));
     }
 

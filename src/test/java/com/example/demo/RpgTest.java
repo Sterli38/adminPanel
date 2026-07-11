@@ -3,26 +3,20 @@ package com.example.demo;
 import com.example.demo.controller.PlayerMapper;
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
-import com.example.demo.dao.InMemoryPlayerRepository;
 import com.example.demo.entity.Profession;
 import com.example.demo.entity.Race;
 import com.example.demo.filter.Filter;
 import com.example.demo.filter.PlayerOrder;
 import com.example.demo.service.PlayerService;
-import com.example.demo.service.dto.CreatePlayerDto;
 import com.example.demo.service.dto.FullPlayerDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Date;
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -38,21 +32,14 @@ class RpgTest {
     @Autowired
     private PlayerService playerService;
     @Autowired
-    private InMemoryPlayerRepository playerRepository;
-    @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
 
-    @BeforeEach
-    public void clear() {
-        playerRepository.clear();
-    }
-
     @Test
     public void createPlayerTest() throws Exception {
         CreatePlayerRequest createPlayerRequest = new CreatePlayerRequest();
-        createPlayerRequest.setName("player");
+        createPlayerRequest.setName("CreatePlayerTest");
         createPlayerRequest.setTitle("title");
         createPlayerRequest.setRace(Race.HUMAN);
         createPlayerRequest.setProfession(Profession.PALADIN);
@@ -67,7 +54,7 @@ class RpgTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.name").value("player"))
+                .andExpect(jsonPath("$.name").value("CreatePlayerTest9"))
                 .andExpect(jsonPath("$.title").value("title"))
                 .andExpect(jsonPath("$.race").value(Race.HUMAN.name()))
                 .andExpect(jsonPath("$.profession").value(Profession.PALADIN.name()))

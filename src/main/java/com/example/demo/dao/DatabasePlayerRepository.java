@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,16 +18,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DatabasePlayerRepository implements PlayerRepository {
     private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert simpleJdbcInsert;
+    private final SimpleJdbcInsert simplePlayerJdbcInsert;
 
     @Override
     public Player save(Player player) {
-        //TODO попробовать SimpleJdbcInsert
-//        String savePlayerSql = "INSERT INTO player(" + //TODO вынести в отдельный интерфейс, название таблиц в единственном числе
-//                "name, title, race_id, profession_id, experience, level, untilNextLevel, birthday, banned)" +
-//                " values(" +
-//                "?, ?, (SELECT id FROM race WHERE name = ?), (SELECT id FROM profession where name = ?), ?, ?, ?, ?, ?)"; //TODO оздапросы делаем
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("name", player.getName());
         parameters.put("title", player.getTitle());
@@ -38,7 +33,7 @@ public class DatabasePlayerRepository implements PlayerRepository {
         parameters.put("birthday", new java.sql.Date(player.getBirthday().getTime()));
         parameters.put("banned", player.getBanned());
 
-        Long id = simpleJdbcInsert.executeAndReturnKey(parameters).longValue();
+        Long id = simplePlayerJdbcInsert.executeAndReturnKey(parameters).longValue();
 
         player.setId(id);
         return player;
@@ -52,12 +47,19 @@ public class DatabasePlayerRepository implements PlayerRepository {
                 FROM player 
                 JOIN race on player.race_id = race.id
                 JOIN profession on player.profession_id = profession.id
-                """;
-        StringBuilder stringBuilder = new StringBuilder(sql);
+                """; //TODO вынести SQL
+
+        //TODO устранить дублирующийся код
+
+        List<String> clauses = new ArrayList<>(); // TODO переделать весь код под эти два списка
+        List<Object> values = new ArrayList<>();
+
+
         Map<String, String> map = new HashMap<>();
 
         if (filter.getName() != null) {
-            map.put("player.name ILIKE ?", "%" + filter.getName() + "%");
+            clauses.add("player.name ILIKE ?");
+            values.add("%" + filter.getName() + "%");
         }
 
         if (filter.getTitle() != null) {
@@ -100,9 +102,10 @@ public class DatabasePlayerRepository implements PlayerRepository {
             map.put("getMaxLevel <= ?", String.valueOf(filter.getMaxLevel()));
         }
 
-        if (!map.isEmpty()) {
+        StringBuilder stringBuilder = new StringBuilder(sql);
+        if (!clauses.isEmpty()) {
             stringBuilder.append(" WHERE ");
-            stringBuilder.append(String.join(" AND ", map.keySet()));
+            stringBuilder.append(String.join(" AND ", clauses));
         }
 
         if(filter.getOrder() != null) {
@@ -112,9 +115,7 @@ public class DatabasePlayerRepository implements PlayerRepository {
         stringBuilder.append(" OFFSET ").append(getSkip(filter));
         stringBuilder.append(" LIMIT ").append(getLimit(filter));
 
-        List<Player> players = jdbcTemplate.query(stringBuilder.toString(), new PlayerRowMapper(), map.values().toArray());
-
-        return players;
+        return jdbcTemplate.query(stringBuilder.toString(), new PlayerRowMapper(), values.toArray());
     }
 
     @Override

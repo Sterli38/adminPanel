@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 @Configuration
 public class DatabaseConfiguration {
     @Bean
-    public SimpleJdbcInsert simpleJdbcInsert (DataSource dataSource) {
+    public SimpleJdbcInsert simplePlayerJdbcInsert(DataSource dataSource) {
         return new SimpleJdbcInsert(dataSource)
                 .withTableName("player")
                 .usingGeneratedKeyColumns("id");
