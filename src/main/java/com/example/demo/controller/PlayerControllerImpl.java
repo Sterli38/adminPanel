@@ -2,13 +2,13 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
-import com.example.demo.controller.response.PlayerCountResponse;
 import com.example.demo.controller.response.PlayerResponse;
 import com.example.demo.filter.Filter;
 import com.example.demo.service.PlayerService;
 import com.example.demo.service.dto.CreatePlayerDto;
 import com.example.demo.service.dto.FullPlayerDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,8 +40,8 @@ public class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public PlayerCountResponse getAllPlayerCount(Filter filter) {
-        return PlayerMapper.convertPlayerCountToPlayerCountResponse(playerService.getAllPlayersCount(filter));
+    public Integer getAllPlayerCount(Filter filter) {
+        return playerService.getAllPlayersCount(filter);
     }
 
     @Override

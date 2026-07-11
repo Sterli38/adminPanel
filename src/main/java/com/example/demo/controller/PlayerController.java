@@ -2,9 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
-import com.example.demo.controller.response.PlayerCountResponse;
 import com.example.demo.controller.response.PlayerResponse;
 import com.example.demo.filter.Filter;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +24,7 @@ public interface PlayerController {
     List<PlayerResponse> getPlayerByFilter(Filter filter);
 
     @GetMapping("/count")
-    PlayerCountResponse getAllPlayerCount(Filter filter);
+    Integer getAllPlayerCount(Filter filter);
 
     @GetMapping("/{id}")
     PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id);
