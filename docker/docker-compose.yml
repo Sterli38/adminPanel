@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  admin-panel-db:
+    image: postgres:15
+    container_name: my-container-for-admin-panel-db
+    ports:
+      - "3432:5432"
+    environment:
+      POSTGRES_DB: adminpaneldb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+
+
