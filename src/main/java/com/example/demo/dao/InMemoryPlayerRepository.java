@@ -5,7 +5,7 @@ import com.example.demo.entity.Profession;
 import com.example.demo.entity.Race;
 import com.example.demo.filter.Filter;
 import com.example.demo.filter.FilterPredicateBuilder;
-import com.example.demo.filter.PlayerOrder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
@@ -19,11 +19,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @ConditionalOnProperty(name = "repository.type", havingValue = "inMemory")
 @Repository
 public class InMemoryPlayerRepository implements PlayerRepository {
+    private final boolean isTestDataEnabled;
+
     private Long id = 0L;
     private final Map<Long, Player> playerStorage = new ConcurrentHashMap<>();
 
+    public InMemoryPlayerRepository(@Value("${test.data.enabled}") boolean isTestDataEnabled) {
+        this.isTestDataEnabled = isTestDataEnabled;
+    }
+
     @PostConstruct
     private void initData() {
+        if (!isTestDataEnabled) {
+            return;
+        }
+
         Random random = new Random();
         for (int i = 1; i < 50; i++) {
             Player player = new Player();
@@ -75,10 +85,6 @@ public class InMemoryPlayerRepository implements PlayerRepository {
     }
 
     private int getSkip(Filter filter) {
-        if(filter == null) {
-            return 0;
-        }
-
         int pageNumber = 0;
         if (filter.getPageNumber() != null) {
             pageNumber = filter.getPageNumber();
@@ -94,10 +100,6 @@ public class InMemoryPlayerRepository implements PlayerRepository {
 
     private int getLimit(Filter filter) {
         int pageSize = 3;
-
-        if(filter == null) {
-            return pageSize;
-        }
 
         if(filter.getPageSize() != null) {
             pageSize = filter.getPageSize();

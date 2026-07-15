@@ -9,91 +9,113 @@
                 <tableExists tableName="race"/>
             </not>
         </preConditions>
-        <sql>
-            CREATE TABLE race
-            (
-                id   SERIAL PRIMARY KEY,
-                name VARCHAR NOT NULL
-            );
-        </sql>
+        <createTable tableName="race">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <insert tableName="race">
+            <column name="name" value="HUMAN"/>
+        </insert>
+        <insert tableName="race">
+            <column name="name" value="DWARF"/>
+        </insert>
+        <insert tableName="race">
+            <column name="name" value="ELF"/>
+        </insert>
+        <insert tableName="race">
+            <column name="name" value="GIANT"/>
+        </insert>
+        <insert tableName="race">
+            <column name="name" value="ORC"/>
+        </insert>
+        <insert tableName="race">
+            <column name="name" value="TROLL"/>
+        </insert>
+        <insert tableName="race">
+            <column name="name" value="HOBBIT"/>
+        </insert>
     </changeSet>
-
-<!--        TODO объединить с созданием таблицы-->
-    <changeSet id="add-init-data-in-table-race" author="Leonid Velikanov">
-        <preConditions>
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM race
-
-            </sqlCheck>
-        </preConditions>
-        <sql>
-            INSERT INTO race(name)
-            values ('HUMAN'),
-                   ('DWARF'),
-                   ('ELF'),
-                   ('GIANT'),
-                   ('ORC'),
-                   ('TROLL'),
-                   ('HOBBIT');
-        </sql>
-    </changeSet>
-
     <changeSet id="create-table-profession" author="Leonid Velikanov">
         <preConditions>
             <not>
                 <tableExists tableName="profession"/>
             </not>
         </preConditions>
-        <sql>
-            CREATE TABLE profession
-            (
-                id   SERIAL PRIMARY KEY,
-                name VARCHAR NOT NULL
-            );
-        </sql>
-    </changeSet>
+        <createTable tableName="profession">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <insert tableName="profession">
+            <column name="name" value="WARRIOR"/>
+        </insert>
+        <insert tableName="profession">
+            <column name="name" value="ROGUE"/>
+        </insert>
+        <insert tableName="profession">
+            <column name="name" value="SORCERER"/>
+        </insert>
+        <insert tableName="profession">
+            <column name="name" value="CLERIC"/>
+        </insert>
+        <insert tableName="profession">
+            <column name="name" value="PALADIN"/>
+        </insert>
+        <insert tableName="profession">
+            <column name="name" value="NAZGUL"/>
+        </insert>
+        <insert tableName="profession">
+            <column name="name" value="WARLOCK"/>
+        </insert>
+        <insert tableName="profession">
+            <column name="name" value="DRUID"/>
+        </insert>
 
-    <!--    TODO объединить с созданием таблицы-->
-    <changeSet id="add-init-data-in-table-profession" author="Leonid Velikanov">
-        <preConditions>
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM profession
-            </sqlCheck>
-        </preConditions>
-        <sql>
-            INSERT INTO profession(name)
-            values ('WARRIOR'),
-                   ('ROGUE'),
-                   ('SORCERER'),
-                   ('CLERIC'),
-                   ('PALADIN'),
-                   ('NAZGUL'),
-                   ('WARLOCK'),
-                   ('DRUID');
-        </sql>
     </changeSet>
-
     <changeSet id="create-table-player" author="Leonid Velikanov">
         <preConditions>
             <not>
                 <tableExists tableName="player"/>
             </not>
         </preConditions>
-        <sql>
-            CREATE TABLE player
-            (
-                id             SERIAL PRIMARY KEY,
-                name           VARCHAR(12) NOT NULL UNIQUE,
-                title          VARCHAR(30) NOT NULL,
-                race_id        INT REFERENCES race (id),
-                profession_id  INT REFERENCES profession (id),
-                experience     INT         NOT NULL,
-                level          INT         NOT NULL,
-                untilNextLevel INT         NOT NULL,
-                birthday       DATE        NOT NULL,
-                banned         BOOLEAN     NOT NULL
-            );
-        </sql>
+        <createTable tableName="player">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="race_id" type="int">
+                <constraints nullable="false" foreignKeyName="race_id" references="race(id)"/>
+            </column>
+            <column name="profession_id" type="int">
+                <constraints nullable="false" foreignKeyName="profession_id" references="profession(id)"/>
+            </column>
+            <column name="experience" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="until_next_level" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="birthday" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="banned" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
-
 </databaseChangeLog>

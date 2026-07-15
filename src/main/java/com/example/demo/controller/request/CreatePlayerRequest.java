@@ -19,7 +19,7 @@ public class CreatePlayerRequest {
     private Race race;
     @NotNull
     private Profession profession;
-    @Positive
+    @NotNull
     private Long birthday;
     @NotNull
     private Boolean banned;
