@@ -50,7 +50,7 @@ public class DatabasePlayerRepository implements PlayerRepository {
         }
     }
 
-    private void  updatePlayer(Player player) {
+    private void updatePlayer(Player player) {
         Object[] args = {
                 player.getName(),
                 player.getTitle(),
@@ -83,7 +83,6 @@ public class DatabasePlayerRepository implements PlayerRepository {
             return null;
         }
     }
-
 
     @Override
     public Integer getAllPlayersCount(Filter filter) {

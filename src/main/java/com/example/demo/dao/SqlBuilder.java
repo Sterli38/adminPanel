@@ -44,7 +44,7 @@ public class SqlBuilder {
 
         if (filter.getBanned() != null) {
             clauses.add("banned = ?");
-            values.add(String.valueOf(filter.getBanned()));
+            values.add(filter.getBanned());
         }
 
         if (filter.getMinExperience() != null) {

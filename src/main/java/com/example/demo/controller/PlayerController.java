@@ -3,8 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
 import com.example.demo.controller.response.PlayerResponse;
+import com.example.demo.controller.validation.ExistingPlayer;
 import com.example.demo.filter.Filter;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,12 +27,12 @@ public interface PlayerController {
     Integer getAllPlayerCount(Filter filter);
 
     @GetMapping("/{id}")
-    PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id);
+    PlayerResponse getPlayerById(@PositiveOrZero @ExistingPlayer @PathVariable Long id);
 
     @PostMapping("/{id}")
-    PlayerResponse editPlayer(@PositiveOrZero @PathVariable Long id, @RequestBody EditPlayerRequest editPlayerRequest);
+    PlayerResponse editPlayer(@PositiveOrZero @ExistingPlayer @PathVariable Long id, @RequestBody EditPlayerRequest editPlayerRequest);
 
     @DeleteMapping("/{id}")
-    void deletePlayerById(@PositiveOrZero @PathVariable Long id);
+    void deletePlayerById(@PositiveOrZero @ExistingPlayer @PathVariable Long id);
 
 }

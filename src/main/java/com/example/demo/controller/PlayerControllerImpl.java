@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
 import com.example.demo.controller.response.PlayerResponse;
+import com.example.demo.controller.validation.ExistingPlayer;
 import com.example.demo.filter.Filter;
 import com.example.demo.service.PlayerService;
 import com.example.demo.service.dto.CreatePlayerDto;
@@ -44,19 +45,19 @@ public class PlayerControllerImpl implements PlayerController {
     }
 
     @Override
-    public PlayerResponse getPlayerById(@PositiveOrZero @PathVariable Long id) {// TODO сделать кастомный валидаторо, который будет отдавать 404 если игрока нет
+    public PlayerResponse getPlayerById(@PositiveOrZero @ExistingPlayer @PathVariable Long id) {// TODO сделать кастомный валидаторо, который будет отдавать 404 если игрока нет
         return PlayerMapper.convertResponsePlayerDtoToPlayerResponse(playerService.getPlayerById(id));
     }
 
     @Override
-    public PlayerResponse editPlayer(@PositiveOrZero @PathVariable  Long id, @RequestBody EditPlayerRequest editPlayerRequest) {
+    public PlayerResponse editPlayer(@PositiveOrZero @ExistingPlayer @PathVariable Long id, @RequestBody EditPlayerRequest editPlayerRequest) {
         CreatePlayerDto createPlayerDto = PlayerMapper.convertPlayerRequestToPlayerDto(editPlayerRequest);
         FullPlayerDto editPLayer = playerService.editPlayer(id, createPlayerDto);
         return PlayerMapper.convertResponsePlayerDtoToPlayerResponse(editPLayer);
     }
 
     @Override
-    public void deletePlayerById(@PositiveOrZero @PathVariable Long id) {
+    public void deletePlayerById(@PositiveOrZero @ExistingPlayer @PathVariable Long id) {
         playerService.deletePlayerById(id);
     }
 }

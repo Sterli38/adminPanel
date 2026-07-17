@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -696,54 +697,6 @@ class RpgTest {
                 .andExpect(jsonPath("$[2].untilNextLevel").value(199));
     }
 
-//    @Test
-//    public void getAllPlayerByFilterTest() throws Exception {
-//        CreatePlayerRequest expectedPlayer1 = new CreatePlayerRequest();
-//        expectedPlayer1.setName("testPlayer");
-//        expectedPlayer1.setTitle("testTitle");
-//        expectedPlayer1.setRace(Race.HUMAN);
-//        expectedPlayer1.setProfession(Profession.PALADIN);
-//        expectedPlayer1.setExperience(1000);
-//        expectedPlayer1.setBirthday(1673481600000L);
-//        expectedPlayer1.setBanned(false);
-//
-//        CreatePlayerRequest expectedPlayer2 = new CreatePlayerRequest();
-//        expectedPlayer2.setName("c");
-//        expectedPlayer2.setTitle("testTitle");
-//        expectedPlayer2.setRace(Race.HUMAN);
-//        expectedPlayer2.setProfession(Profession.PALADIN);
-//        expectedPlayer2.setExperience(999);
-//        expectedPlayer2.setBirthday(1673481600000L);
-//        expectedPlayer2.setBanned(false);
-//
-//        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedPlayer1));
-//        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedPlayer2));
-//
-//        mockMvc.perform(
-//                        get("/rest/players"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$", hasSize(2)))
-//                .andExpect(jsonPath("$[0].id").isNumber())
-//                .andExpect(jsonPath("$[0].name").value("testPlayer"))
-//                .andExpect(jsonPath("$[0].title").value("testTitle"))
-//                .andExpect(jsonPath("$[0].race").value(Race.HUMAN.name()))
-//                .andExpect(jsonPath("$[0].profession").value(Profession.PALADIN.name()))
-//                .andExpect(jsonPath("$[0].birthday").value(1673481600000L))
-//                .andExpect(jsonPath("$[0].banned").value(false))
-//                .andExpect(jsonPath("$[0].experience").value(1000))
-//                .andExpect(jsonPath("$[0].level").value(4))
-//                .andExpect(jsonPath("$[0].untilNextLevel").value(500))
-//                .andExpect(jsonPath("$[1].id").isNumber())
-//                .andExpect(jsonPath("$[1].name").value("c"))
-//                .andExpect(jsonPath("$[1].title").value("testTitle"))
-//                .andExpect(jsonPath("$[1].race").value(Race.HUMAN.name()))
-//                .andExpect(jsonPath("$[1].profession").value(Profession.PALADIN.name()))
-//                .andExpect(jsonPath("$[1].birthday").value(1673481600000L))
-//                .andExpect(jsonPath("$[1].banned").value(false))
-//                .andExpect(jsonPath("$[1].experience").value(999))
-//                .andExpect(jsonPath("$[1].level").value(3))
-//                .andExpect(jsonPath("$[1].untilNextLevel").value(1));
-//    }
 
     @Test
     public void getPlayerByIdTest() throws Exception {
@@ -774,34 +727,54 @@ class RpgTest {
                 .andExpect(jsonPath("$.untilNextLevel").value(500));
     }
 
-//    @Test
-//    public void getAllPlayersCountTest() throws Exception {
-//        CreatePlayerRequest expectedTestPlayer1 = new CreatePlayerRequest();
-//        expectedTestPlayer1.setName("testPlayer");
-//        expectedTestPlayer1.setTitle("testTitle");
-//        expectedTestPlayer1.setRace(Race.HUMAN);
-//        expectedTestPlayer1.setProfession(Profession.PALADIN);
-//        expectedTestPlayer1.setExperience(1000);
-//        expectedTestPlayer1.setBirthday(1673481600000L);
-//        expectedTestPlayer1.setBanned(false);
-//
-//        CreatePlayerRequest expectedTestPlayer2 = new CreatePlayerRequest();
-//        expectedTestPlayer2.setName("c");
-//        expectedTestPlayer2.setTitle("testTitle");
-//        expectedTestPlayer2.setRace(Race.HUMAN);
-//        expectedTestPlayer2.setProfession(Profession.PALADIN);
-//        expectedTestPlayer2.setExperience(999);
-//        expectedTestPlayer2.setBirthday(1673481600000L);
-//        expectedTestPlayer2.setBanned(false);
-//
-//        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer1));
-//        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer2));
-//
-//        mockMvc.perform(
-//                        get("/rest/players/count"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().string("2"));
-//    }
+    @Test
+    public void getAllPlayersCountTest() throws Exception {
+        CreatePlayerRequest expectedTestPlayer1 = new CreatePlayerRequest();
+        expectedTestPlayer1.setName("filterTest");
+        expectedTestPlayer1.setTitle("FilterTITLE");
+        expectedTestPlayer1.setRace(Race.ELF);
+        expectedTestPlayer1.setProfession(Profession.DRUID);
+        expectedTestPlayer1.setExperience(110000);
+        expectedTestPlayer1.setBirthday(1673481600000L);
+        expectedTestPlayer1.setBanned(true);
+
+        CreatePlayerRequest expectedTestPlayer2 = new CreatePlayerRequest();
+        expectedTestPlayer2.setName("FilterTest");
+        expectedTestPlayer2.setTitle("filterTitle");
+        expectedTestPlayer2.setRace(Race.ELF);
+        expectedTestPlayer2.setProfession(Profession.DRUID);
+        expectedTestPlayer2.setExperience(120000);
+        expectedTestPlayer2.setBirthday(1673481600000L);
+        expectedTestPlayer2.setBanned(true);
+
+        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer1));
+        playerService.create(PlayerMapper.convertPlayerRequestToPlayerDto(expectedTestPlayer2));
+
+        Filter filter = new Filter();
+        filter.setName("filter");
+        filter.setTitle("filter");
+        filter.setRace(Race.ELF);
+        filter.setProfession(Profession.DRUID);
+        filter.setMinExperience(110000);
+        filter.setMaxExperience(120000);
+        filter.setAfter(1673481600000L);
+        filter.setBefore(1673481600000L);
+        filter.setBanned(true);
+
+        mockMvc.perform(
+                        get("/rest/players/count")
+                                .param("name", filter.getName())
+                                .param("title", filter.getTitle())
+                                .param("race", filter.getRace().name())
+                                .param("profession", filter.getProfession().name())
+                                .param("minExperience", filter.getMinExperience().toString())
+                                .param("maxExperience", filter.getMaxExperience().toString())
+                                .param("after", filter.getAfter().toString())
+                                .param("before", filter.getBefore().toString())
+                                .param("banned", filter.getBanned().toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("2"));
+    }
 
     @Test
     public void editPlayerTest() throws Exception {
@@ -862,5 +835,39 @@ class RpgTest {
 
         FullPlayerDto player = playerService.getPlayerById(createdPlayerDto.getId());
         Assertions.assertNull(player);
+    }
+
+    @Test
+    public void getPlayerByIdNotFoundTest() throws Exception {
+        CreatePlayerRequest playerForCreation = new CreatePlayerRequest();
+        playerForCreation.setName("p");
+        playerForCreation.setTitle("t");
+        playerForCreation.setRace(Race.HUMAN);
+        playerForCreation.setProfession(Profession.PALADIN);
+        playerForCreation.setExperience(1000);
+        playerForCreation.setBirthday(1673481600000L);
+        playerForCreation.setBanned(false);
+
+        Long nonExistentId = 124124214451514123L;
+
+        mockMvc.perform(get("/rest/players/{id}", nonExistentId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getPlayerByIdBadRequestTest() throws Exception {
+        CreatePlayerRequest playerForCreation = new CreatePlayerRequest();
+        playerForCreation.setName("p");
+        playerForCreation.setTitle("t");
+        playerForCreation.setRace(Race.HUMAN);
+        playerForCreation.setProfession(Profession.PALADIN);
+        playerForCreation.setExperience(1000);
+        playerForCreation.setBirthday(1673481600000L);
+        playerForCreation.setBanned(false);
+
+        Long invalidId = -1L;
+
+        mockMvc.perform(get("/rest/players/{id}", invalidId))
+                .andExpect(status().isBadRequest());
     }
 }

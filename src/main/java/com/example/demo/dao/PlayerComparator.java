@@ -22,7 +22,7 @@ public class PlayerComparator implements Comparator<Player> {
         if (filter.getOrder() == PlayerOrder.ID) {
             return a.getId().compareTo(b.getId());
         } else if (filter.getOrder() == PlayerOrder.NAME) {
-            return a.getName().compareTo(b.getName());
+            return a.getName().compareToIgnoreCase(b.getName());
         } else if (filter.getOrder() == PlayerOrder.EXPERIENCE) {
             return a.getExperience().compareTo(b.getExperience());
         } else if (filter.getOrder() == PlayerOrder.BIRTHDAY) {
