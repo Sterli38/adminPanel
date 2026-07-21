@@ -118,4 +118,16 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="change-person-id-to-bigint" author="Leonid Velikanov">
+        <modifyDataType tableName="player" columnName="id" newDataType="bigint"/>
+    </changeSet>
+
+    <changeSet id="change-race-id-to-bigint" author="Leonid Velikanov">
+        <modifyDataType tableName="race" columnName="id" newDataType="bigint"/>
+    </changeSet>
+
+    <changeSet id="change-profession-id-to-bigint" author="Leonid Velikanov">
+        <modifyDataType tableName="profession" columnName="id" newDataType="bigint"/>
+    </changeSet>
 </databaseChangeLog>
