@@ -119,15 +119,52 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="change-person-id-to-bigint" author="Leonid Velikanov">
+    <changeSet id="change-player-id-to-bigint-h2" author="Leonid Velikanov" dbms="h2">
+        <dropPrimaryKey tableName="player"/>
         <modifyDataType tableName="player" columnName="id" newDataType="bigint"/>
+        <addAutoIncrement tableName="player" columnName="id" columnDataType="bigint"/>
+        <addPrimaryKey tableName="player" constraintName="pk_player" columnNames="id"/>
+        <addNotNullConstraint tableName="player" columnName="id" constraintName="player_id_not_null"/>
     </changeSet>
 
-    <changeSet id="change-race-id-to-bigint" author="Leonid Velikanov">
+    <changeSet id="change-player-id-to-bigint-pg" author="Leonid Velikanov" dbms="postgresql">
+        <dropPrimaryKey tableName="player"/>
+        <modifyDataType tableName="player" columnName="id" newDataType="bigint"/>
+        <addPrimaryKey tableName="player" constraintName="pk_player" columnNames="id"/>
+        <addNotNullConstraint tableName="player" columnName="id" constraintName="player_id_not_null"/>
+    </changeSet>
+
+    <changeSet id="change-race-id-to-bigint-h2" author="Leonid Velikanov" dbms="h2">
+        <dropForeignKeyConstraint baseTableName="player" constraintName="race_id"/>
+        <dropPrimaryKey tableName="race"/>
         <modifyDataType tableName="race" columnName="id" newDataType="bigint"/>
+        <addAutoIncrement tableName="race" columnName="id" columnDataType="bigint"/>
+        <addPrimaryKey tableName="race" constraintName="pk_race" columnNames="id"/>
+        <addForeignKeyConstraint baseTableName="player" baseColumnNames="race_id" constraintName="race_id" referencedTableName="race" referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="change-profession-id-to-bigint" author="Leonid Velikanov">
+    <changeSet id="change-race-id-to-bigint-pg" author="Leonid Velikanov" dbms="postgresql">
+        <dropForeignKeyConstraint baseTableName="player" constraintName="race_id"/>
+        <dropPrimaryKey tableName="race"/>
+        <modifyDataType tableName="race" columnName="id" newDataType="bigint"/>
+        <addPrimaryKey tableName="race" constraintName="pk_race" columnNames="id"/>
+        <addForeignKeyConstraint baseTableName="player" baseColumnNames="race_id" constraintName="race_id" referencedTableName="race" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="change-profession-id-to-bigint-h2" author="Leonid Velikanov" dbms="h2">
+        <dropForeignKeyConstraint baseTableName="player" constraintName="profession_id"/>
+        <dropPrimaryKey tableName="profession"/>
         <modifyDataType tableName="profession" columnName="id" newDataType="bigint"/>
+        <addAutoIncrement tableName="profession" columnName="id" columnDataType="bigint"/>
+        <addPrimaryKey tableName="profession" constraintName="pk_profession" columnNames="id"/>
+        <addForeignKeyConstraint baseTableName="player" baseColumnNames="profession_id" constraintName="profession_id" referencedTableName="profession" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="change-profession-id-to-bigint-pg" author="Leonid Velikanov" dbms="postgresql">
+        <dropForeignKeyConstraint baseTableName="player" constraintName="profession_id"/>
+        <dropPrimaryKey tableName="profession"/>
+        <modifyDataType tableName="profession" columnName="id" newDataType="bigint"/>
+        <addPrimaryKey tableName="profession" constraintName="pk_profession" columnNames="id"/>
+        <addForeignKeyConstraint baseTableName="player" baseColumnNames="profession_id" constraintName="profession_id" referencedTableName="profession" referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>
