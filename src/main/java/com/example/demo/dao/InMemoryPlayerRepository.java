@@ -38,13 +38,13 @@ public class InMemoryPlayerRepository implements PlayerRepository {
         for (int i = 1; i < 50; i++) {
             Player player = new Player();
             player.setId(id++);
-            player.setRace(Race.values()[random.nextInt((Race.values().length))]);
+//            player.setRace(Race.values()[random.nextInt((Race.values().length))]);
             player.setBanned(random.nextInt(2) == 1);
             player.setName("name" + i + player.getRace());
             player.setLevel(i * random.nextInt(12));
             player.setTitle("title" + random.nextInt(123213213));
             player.setBirthday(new Date(random.nextLong(1782550531)));
-            player.setProfession(Profession.values()[random.nextInt((Profession.values().length))]);
+//            player.setProfession(Profession.values()[random.nextInt((Profession.values().length))]);
             player.setExperience(random.nextInt());
             player.setUntilNextLevel(random.nextInt(123123));
 
