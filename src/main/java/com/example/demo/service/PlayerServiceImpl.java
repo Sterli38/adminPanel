@@ -37,7 +37,8 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public FullPlayerDto getPlayerById(Long id) {
-        return PlayerMapper.convertPlayerToResponsePlayerDto(playerRepository.getPlayerById(id));
+        Player player = playerRepository.getPlayerById(id);
+        return player == null ? null : PlayerMapper.convertPlayerToResponsePlayerDto(player);
     }
 
     public Integer getAllPlayersCount(Filter filter) {

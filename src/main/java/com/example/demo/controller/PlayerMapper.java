@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
-import com.example.demo.controller.response.PlayerCountResponse;
 import com.example.demo.controller.response.PlayerResponse;
 import com.example.demo.entity.Player;
 import com.example.demo.service.dto.CreatePlayerDto;
@@ -80,11 +79,5 @@ public class PlayerMapper {
         responsePlayerDto.setUntilNextLevel(player.getUntilNextLevel());
 
         return responsePlayerDto;
-    }
-
-    public static PlayerCountResponse convertPlayerCountToPlayerCountResponse(Integer count) {
-        PlayerCountResponse playerCountResponse = new PlayerCountResponse();
-        playerCountResponse.setCount(count);
-        return playerCountResponse;
     }
 }
