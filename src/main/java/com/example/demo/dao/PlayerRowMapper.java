@@ -17,8 +17,8 @@ public class PlayerRowMapper implements RowMapper<Player> {
         player.setId(rs.getLong("id"));
         player.setName(rs.getString("name"));
         player.setTitle(rs.getString("title"));
-        player.setRace(Race.valueOf(rs.getString("race")));
-        player.setProfession(Profession.valueOf(rs.getString("profession")));
+//        player.setRace(Race.valueOf(rs.getString("race")));
+//        player.setProfession(Profession.valueOf(rs.getString("profession")));
         player.setExperience(rs.getInt("experience"));
         player.setLevel(rs.getInt("level"));
         player.setUntilNextLevel(rs.getInt("until_next_level"));

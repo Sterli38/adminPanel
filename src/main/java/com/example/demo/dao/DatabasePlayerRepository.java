@@ -24,14 +24,14 @@ public class DatabasePlayerRepository implements PlayerRepository {
 
     @Override
     public Player save(Player player) {
-        Integer raceId = getRaceId(player.getRace());
-        Integer professionId = getProfessionId(player.getProfession());
+//        Integer raceId = getRaceId(player.getRace());
+//        Integer professionId = getProfessionId(player.getProfession());
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("name", player.getName());
         parameters.put("title", player.getTitle());
-        parameters.put("race_id", raceId);
-        parameters.put("profession_id", professionId);
+//        parameters.put("race_id", raceId);
+//        parameters.put("profession_id", professionId);
         parameters.put("experience", player.getExperience());
         parameters.put("level", player.getLevel());
         parameters.put("until_next_level", player.getUntilNextLevel());
@@ -50,12 +50,12 @@ public class DatabasePlayerRepository implements PlayerRepository {
         }
     }
 
-    private void  updatePlayer(Player player) {
+    private void updatePlayer(Player player) {
         Object[] args = {
                 player.getName(),
                 player.getTitle(),
-                player.getRace().name(),
-                player.getProfession().name(),
+//                player.getRace().name(),
+//                player.getProfession().name(),
                 player.getExperience(),
                 player.getLevel(),
                 player.getUntilNextLevel(),
@@ -83,7 +83,6 @@ public class DatabasePlayerRepository implements PlayerRepository {
             return null;
         }
     }
-
 
     @Override
     public Integer getAllPlayersCount(Filter filter) {

@@ -4,6 +4,8 @@ import com.example.demo.controller.request.CreatePlayerRequest;
 import com.example.demo.controller.request.EditPlayerRequest;
 import com.example.demo.controller.response.PlayerResponse;
 import com.example.demo.entity.Player;
+import com.example.demo.entity.Profession;
+import com.example.demo.entity.Race;
 import com.example.demo.service.dto.CreatePlayerDto;
 import com.example.demo.service.dto.FullPlayerDto;
 
@@ -52,26 +54,26 @@ public class PlayerMapper {
         return playerResponse;
     }
 
-    public static Player convertPlayerDtoToPlayer(CreatePlayerDto createPlayerDto) {
-        Player player = new Player();
-        player.setName(createPlayerDto.getName());
-        player.setTitle(createPlayerDto.getTitle());
-        player.setRace(createPlayerDto.getRace());
-        player.setProfession(createPlayerDto.getProfession());
-        player.setBirthday(createPlayerDto.getBirthday());
-        player.setBanned(createPlayerDto.getBanned());
-        player.setExperience(createPlayerDto.getExperience());
-
-        return player;
-    }
+//    public static Player convertPlayerDtoToPlayer(CreatePlayerDto createPlayerDto) {
+//        Player player = new Player();
+//        player.setName(createPlayerDto.getName());
+//        player.setTitle(createPlayerDto.getTitle());
+//        player.setRace(createPlayerDto.getRace());
+//        player.setProfession(createPlayerDto.getProfession());
+//        player.setBirthday(createPlayerDto.getBirthday());
+//        player.setBanned(createPlayerDto.getBanned());
+//        player.setExperience(createPlayerDto.getExperience());
+//
+//        return player;
+//    }
 
     public static FullPlayerDto convertPlayerToResponsePlayerDto(Player player) {
         FullPlayerDto responsePlayerDto = new FullPlayerDto();
         responsePlayerDto.setId(player.getId());
         responsePlayerDto.setName(player.getName());
         responsePlayerDto.setTitle(player.getTitle());
-        responsePlayerDto.setRace(player.getRace());
-        responsePlayerDto.setProfession(player.getProfession());
+        responsePlayerDto.setRace(Race.valueOf(player.getRace().getName()));
+        responsePlayerDto.setProfession(Profession.valueOf(player.getProfession().getName()));
         responsePlayerDto.setBirthday(player.getBirthday());
         responsePlayerDto.setBanned(player.getBanned());
         responsePlayerDto.setExperience(player.getExperience());
